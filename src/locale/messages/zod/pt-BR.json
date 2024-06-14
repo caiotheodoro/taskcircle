@@ -1,0 +1,11 @@
+{
+  "zod": {
+    "errors": {
+      "custom": "Invalid input",
+      "invalid_arguments": "Invalid function arguments"
+    },
+    "types": {
+      "array": "array"
+    }
+  }
+}
