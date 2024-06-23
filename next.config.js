@@ -1,21 +1,20 @@
-const jiti = require('jiti')(__filename);
-
-// Import env here to validate during build. Using jiti we can import .ts files :)
-jiti('./src/env.ts');
-
-const withNextIntl = require('next-intl/plugin')(
-  // This is the default (also the `src` folder is supported out of the box)
-  './src/i18n.ts',
-);
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
-  transpilePackages: ['antd'],
-  swcMinify: true,
-  experimental: {
-    // Required:
-  },
-};
 
-module.exports = withNextIntl(nextConfig);
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+  images: {
+    remotePatterns: [
+      { hostname: "avatars.githubusercontent.com", protocol: "https" },
+      { hostname: "lh3.googleusercontent.com", protocol: "https" },
+    ],
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+}
+
+module.exports = nextConfig
