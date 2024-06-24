@@ -1,23 +1,23 @@
-import { Lobster_Two } from "next/font/google"
-import { auth } from "@/server/auth"
-import { redirect } from "next/navigation"
-import { Button } from "./ui/button"
-import { UserButton } from "./user-button"
-import Link from "next/link"
-const lobster = Lobster_Two({ subsets: ["latin"], weight: ["400"] })
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import { auth } from '@/server/auth';
+
+import Logo from './atoms/logo';
+import { Button } from './ui/button';
+import { UserButton } from './user-button';
 
 export default async function Nav() {
-  const user = await auth()
-  if (!user) redirect("/api/auth/signin")
+  const user = await auth();
+  if (!user) redirect('/api/auth/signin');
   return (
-    <nav className={lobster.className}>
-      <ul className="flex py-8 justify-between items-center">
-        <li>Post it</li>
-
+    <nav>
+      <ul className="flex py-8 justify-between items-center text-3xl relative">
+        <Logo />
         <li>
           {!user ? (
             <Button asChild>
-              <Link href={"/auth/login"}>Sign In</Link>
+              <Link href={'/auth/login'}>Sign In</Link>
             </Button>
           ) : (
             <UserButton expires={user.expires} user={user.user} />
@@ -25,5 +25,5 @@ export default async function Nav() {
         </li>
       </ul>
     </nav>
-  )
+  );
 }
