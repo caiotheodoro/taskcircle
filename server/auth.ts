@@ -1,19 +1,10 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import { eq } from 'drizzle-orm';
 import NextAuth, { NextAuthConfig } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 
 import { db } from '@/server';
 
-import { accounts, users } from './schema';
-
-console.log(
-  process.env.AUTH_GITHUB_ID,
-  process.env.AUTH_GITHUB_ID,
-  process.env.DATABASE_URL,
-);
 export const authConfig = {
   providers: [
     GitHub({
