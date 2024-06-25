@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+import Logo from '@/components/atoms/logo';
+import { UserButton } from '@/components/molecules/user-button';
+import { Button } from '@/components/ui/button';
 import { auth } from '@/server/auth';
-
-import Logo from './atoms/logo';
-import { Button } from './ui/button';
-import { UserButton } from './user-button';
 
 export default async function Nav() {
   const user = await auth();

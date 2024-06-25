@@ -11,7 +11,7 @@ export default function Logo() {
         alt="TaskCircle Logo"
         className="h-12 absolute left-12 top-8"
       />
-      <li>task circle</li>
+      <li className="notranslate">task circle</li>
     </div>
   );
 }
