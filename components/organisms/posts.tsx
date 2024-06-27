@@ -4,11 +4,13 @@ import { useCallback } from 'react';
 
 import Image from 'next/image';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, Trash } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 
+import usePersistStore from '@/app/hooks/stores/persist';
 import { CardMotion } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useGetPosts } from '@/hooks/get-posts';
@@ -16,12 +18,22 @@ import {
   addWarning,
   changePostStatus,
   deletePost,
-} from '@/server/actions/create-post';
+} from '@/server/actions/posts';
 
 export default function Posts() {
-  const { data: posts, error: postError } = useGetPosts();
+  const queryClient = useQueryClient();
+
+  const { organization } = usePersistStore();
+
+  const { data: posts, error: postError } = useGetPosts(organization);
   const { execute: executeAddWarning } = useAction(addWarning);
-  const { execute: executeChangePostStatus } = useAction(changePostStatus);
+  const { execute: executeChangePostStatus } = useAction(changePostStatus, {
+    onSettled(data) {
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
+    },
+  });
   const { execute: exectueDeletePost } = useAction(deletePost);
   const { data: session } = useSession();
 
@@ -34,7 +46,6 @@ export default function Posts() {
 
   const handleChangeStatus = useCallback(
     (post_id: string, status: boolean) => {
-      console.log('oi');
       executeChangePostStatus({ post_id, status, user_id: session?.user.id });
     },
     [executeChangePostStatus, session],
