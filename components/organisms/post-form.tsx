@@ -1,10 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import usePersistStore from '@/app/hooks/stores/persist';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -16,28 +18,43 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { formSchema } from '@/lib/formSchema';
-import { createPost } from '@/server/actions/create-post';
+import { createPost } from '@/server/actions/posts';
 
 export default function PostForm() {
-  // 1. Define your form.
+  const { organization } = usePersistStore();
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
+      currentOrg: organization,
     },
   });
+
   const { execute, status } = useAction(createPost, {
     onSuccess(data) {
       if (data?.error) console.log(data.error);
-      if (data?.success) console.log(data.success);
+      if (data?.success) {
+        console.log('post created');
+        queryClient.invalidateQueries();
+      }
     },
     onExecute(data) {
       console.log('creating post....');
     },
+    onSettled(data) {
+      console.log('post created');
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    execute(values);
+    execute({
+      ...values,
+      currentOrg: organization,
+    });
     form.reset();
   }
 

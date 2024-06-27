@@ -127,6 +127,41 @@
       "when": 1719273945701,
       "tag": "0017_yummy_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1719363900600,
+      "tag": "0018_lively_roxanne_simpson",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1719367542087,
+      "tag": "0019_graceful_zarda",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1719378527671,
+      "tag": "0020_natural_plazm",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1719378706756,
+      "tag": "0021_amazing_scarlet_witch",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1719450828374,
+      "tag": "0022_curved_starbolt",
+      "breakpoints": true
     }
   ]
 }
