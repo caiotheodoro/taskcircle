@@ -30,6 +30,7 @@
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-toast": "^1.2.1",
     "@tanstack/react-query": "^5.17.15",
     "@tanstack/react-query-devtools": "^5.17.18",
     "class-variance-authority": "^0.7.0",
@@ -50,7 +51,8 @@
     "svix": "^1.15.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
