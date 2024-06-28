@@ -6,3 +6,9 @@ export const formSchema = z.object({
   }),
   currentOrg: z.string(),
 });
+
+export const orgSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  slug: z.string(),
+});

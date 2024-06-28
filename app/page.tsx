@@ -1,9 +1,29 @@
-import { HydrationBoundary } from '@tanstack/react-query';
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query';
+
+import OrganizationList from '@/components/organisms/organization-list';
+import { fetchOrganizations } from '@/server/actions/organization';
 
 export default async function Home() {
+  const queryClient = new QueryClient();
+
+  await queryClient.fetchQuery({
+    queryKey: ['organizations'],
+    queryFn: fetchOrganizations,
+    staleTime: 1000 * 60 * 5,
+  });
+
   return (
     <main>
-      <HydrationBoundary>oi</HydrationBoundary>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <section className="border-t border-gray-200 p-5 md:p-6 ">
+          <h1 className="text-3xl font-bold">Your groups</h1>
+          <OrganizationList />
+        </section>
+      </HydrationBoundary>
     </main>
   );
 }

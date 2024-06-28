@@ -5,8 +5,9 @@ import { useEffect } from 'react';
 import usePersistStore from '@/app/hooks/stores/persist';
 import { ORGANIZATION_STATUS } from '@/app/utils/get-org-status';
 import { CardMotion } from '@/components/ui/card';
-import { useGetOrganizations } from '@/hooks/get-organization-status';
+import { useGetOrganizationStatus } from '@/hooks/organization';
 
+import { OrganizationForm } from '../component/organization-form';
 import PostForm from './post-form';
 import Posts from './posts';
 
@@ -17,21 +18,14 @@ interface OrganizationProps {
 export default function Organizations({
   currOrg,
 }: Readonly<OrganizationProps>) {
-  const {
-    data: status,
-    error: orgError,
-    isSuccess,
-  } = useGetOrganizations(currOrg);
+  const { data: status, error: orgError } = useGetOrganizationStatus(currOrg);
 
   const { setOrganization } = usePersistStore();
 
   if (orgError) return orgError.message;
 
   useEffect(() => {
-    if (isSuccess) {
-      console.log('oi', currOrg);
-      setOrganization(currOrg);
-    }
+    setOrganization(currOrg);
   }, [currOrg, setOrganization]);
 
   switch (status) {
@@ -39,9 +33,9 @@ export default function Organizations({
       return (
         <CardMotion
           layout
-          className="flex flex-col mt-6 font-medium border-none shadow-none"
+          className="flex flex-col mt-6 font-medium border-none shadow-none h-full"
         >
-          claimable
+          <OrganizationForm />
         </CardMotion>
       );
     case ORGANIZATION_STATUS.CLAIMED:
@@ -54,6 +48,7 @@ export default function Organizations({
         </CardMotion>
       );
     case ORGANIZATION_STATUS.OWNED:
+    case ORGANIZATION_STATUS.MEMBER:
       return (
         <CardMotion
           layout
@@ -61,15 +56,6 @@ export default function Organizations({
         >
           <PostForm />
           <Posts />
-        </CardMotion>
-      );
-    case ORGANIZATION_STATUS.MEMBER:
-      return (
-        <CardMotion
-          layout
-          className="flex flex-col mt-6 font-medium border-none shadow-none"
-        >
-          member
         </CardMotion>
       );
   }

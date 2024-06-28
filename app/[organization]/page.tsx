@@ -4,11 +4,8 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
-import usePersistStore from '@/app/hooks/stores/persist';
 import Organizations from '@/components/organisms/organizations';
-import PostForm from '@/components/organisms/post-form';
-import Posts from '@/components/organisms/posts';
-import { fetchOrganizations, getOrganization } from '@/server/actions/posts';
+import { getOrganization } from '@/server/actions/organization';
 
 interface OrganizationProps {
   params: {
@@ -30,9 +27,7 @@ export default async function Organization({
   return (
     <main>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        {/* <PostForm /> */}
         <Organizations currOrg={organization} />
-        {/* <Posts /> */}
       </HydrationBoundary>
     </main>
   );

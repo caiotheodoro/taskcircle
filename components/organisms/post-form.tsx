@@ -17,10 +17,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { formSchema } from '@/lib/formSchema';
 import { createPost } from '@/server/actions/posts';
 
 export default function PostForm() {
+  const { toast } = useToast();
   const { organization } = usePersistStore();
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,18 +34,13 @@ export default function PostForm() {
   });
 
   const { execute, status } = useAction(createPost, {
-    onSuccess(data) {
-      if (data?.error) console.log(data.error);
-      if (data?.success) {
-        console.log('post created');
-        queryClient.invalidateQueries();
-      }
-    },
-    onExecute(data) {
-      console.log('creating post....');
-    },
-    onSettled(data) {
-      console.log('post created');
+    onSuccess() {
+      toast({
+        title: 'Task created!',
+        description: 'Your task has been created successfully',
+        variant: 'success',
+      });
+
       queryClient.invalidateQueries({
         queryKey: ['posts'],
       });
@@ -59,7 +56,7 @@ export default function PostForm() {
   }
 
   return (
-    <main>
+    <main className="animate-in fade-in-25 duration-300">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
