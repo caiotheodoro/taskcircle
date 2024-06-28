@@ -11,6 +11,10 @@ import { SessionProvider } from 'next-auth/react';
 
 // In Next.js, this file would be called: app/providers.jsx
 
+// In Next.js, this file would be called: app/providers.jsx
+
+// In Next.js, this file would be called: app/providers.jsx
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>

@@ -10,13 +10,7 @@ import { formSchema } from '@/lib/formSchema';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
 
-import {
-  Role,
-  organization,
-  posts,
-  userOrganizations,
-  warnings,
-} from '../schema';
+import { organization, posts, warnings } from '../schema';
 
 export const action = createSafeActionClient();
 
@@ -59,12 +53,9 @@ export const deletePost = action(deleteSchema, async ({ id }) => {
 });
 
 export const fetchPosts = async (currentOrg: string) => {
-  console.log(currentOrg);
   const org = await db.query.organization.findFirst({
     where: eq(organization.name, currentOrg),
   });
-
-  console.log('org', org);
 
   if (!org) return { error: 'Organization not found' };
 
@@ -78,23 +69,6 @@ export const fetchPosts = async (currentOrg: string) => {
   });
   if (!orgPosts) return { error: 'No posts !' };
   if (orgPosts) return { success: orgPosts };
-};
-
-export const fetchOrganizations = async () => {
-  const session = await auth();
-
-  const organizations = await db.query.userOrganizations.findMany({
-    where: eq(userOrganizations.user_id, session.user.id),
-    with: {
-      organization: true,
-    },
-    columns: {
-      role: true,
-    },
-  });
-
-  if (!organizations) return { error: 'No organizations found' };
-  return { success: organizations };
 };
 
 const addWarningSchema = z.object({
@@ -150,38 +124,3 @@ export const changePostStatus = action(
     if (updatedPost) return { success: 'Post updated' };
   },
 );
-
-enum ORGANIZATION_STATUS {
-  CLAIMABLE = 'claimable',
-  CLAIMED = 'claimed',
-
-  OWNED = 'owned',
-
-  MEMBER = 'member',
-}
-
-const getOrganizationSchema = z.object({
-  organization_name: z.string(),
-});
-
-export const getOrganization = action(getOrganizationSchema, async (input) => {
-  const session = await auth();
-
-  const org = await db.query.organization.findFirst({
-    where: eq(organization.name, input.organization_name),
-  });
-
-  if (!org) return ORGANIZATION_STATUS.CLAIMABLE;
-
-  const userOrg = await db.query.userOrganizations.findFirst({
-    where: and(
-      eq(userOrganizations.user_id, session.user.id),
-      eq(userOrganizations.organization_id, org.id),
-    ),
-  });
-
-  if (userOrg.role === Role.ADMIN) return ORGANIZATION_STATUS.OWNED;
-  if (userOrg.role === Role.MEMBER) return ORGANIZATION_STATUS.MEMBER;
-
-  return ORGANIZATION_STATUS.CLAIMED;
-});

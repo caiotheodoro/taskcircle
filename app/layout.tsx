@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 import Nav from '@/components/organisms/nav';
+import { Toaster } from '@/components/ui/toaster';
 import Providers from '@/lib/query-provider';
 
 import './globals.css';
@@ -21,10 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="p-4 lg:px-48">
+        <div className="p-4 lg:px-24  xl:px-48">
           <Providers>
             <Nav />
             {children}
+            <Toaster />
           </Providers>
         </div>
       </body>

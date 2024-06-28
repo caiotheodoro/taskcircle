@@ -13,19 +13,26 @@ import { useAction } from 'next-safe-action/hooks';
 import usePersistStore from '@/app/hooks/stores/persist';
 import { CardMotion } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useGetPosts } from '@/hooks/get-posts';
+import { useGetPosts } from '@/hooks/posts';
 import {
   addWarning,
   changePostStatus,
   deletePost,
 } from '@/server/actions/posts';
 
+import { Skeleton } from '../ui/skeleton';
+import { useToast } from '../ui/use-toast';
+
 export default function Posts() {
   const queryClient = useQueryClient();
-
+  const { toast } = useToast();
   const { organization } = usePersistStore();
 
-  const { data: posts, error: postError } = useGetPosts(organization);
+  const {
+    data: posts,
+    error: postError,
+    isLoading,
+  } = useGetPosts(organization);
   const { execute: executeAddWarning } = useAction(addWarning);
   const { execute: executeChangePostStatus } = useAction(changePostStatus, {
     onSettled(data) {
@@ -34,7 +41,19 @@ export default function Posts() {
       });
     },
   });
-  const { execute: exectueDeletePost } = useAction(deletePost);
+  const { execute: executeDeletePost } = useAction(deletePost, {
+    onSuccess() {
+      toast({
+        title: 'Task deleted.',
+        description: 'Your task has been deleted successfully',
+        variant: 'destructive',
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
+    },
+  });
   const { data: session } = useSession();
 
   const handleAddWarning = useCallback(
@@ -50,6 +69,18 @@ export default function Posts() {
     },
     [executeChangePostStatus, session],
   );
+
+  if (isLoading)
+    return (
+      <CardMotion
+        layout
+        className="flex flex-col mt-6 gap-6 border-none shadow-none"
+      >
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Skeleton key={index} className="h-[96px] w-full rounded-xl" />
+        ))}
+      </CardMotion>
+    );
 
   if (postError) return postError.message;
   if (posts?.success)
@@ -90,7 +121,7 @@ export default function Posts() {
                     </p>
                   </div>
                   <Trash
-                    onClick={() => exectueDeletePost({ id: post.id })}
+                    onClick={() => executeDeletePost({ id: post.id })}
                     className="w-4 text-red-400 cursor-pointer "
                   />
                 </div>
