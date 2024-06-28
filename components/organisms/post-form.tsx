@@ -1,10 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import usePersistStore from '@/app/hooks/stores/persist';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -15,34 +17,46 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { formSchema } from '@/lib/formSchema';
-import { createPost } from '@/server/actions/create-post';
+import { createPost } from '@/server/actions/posts';
 
 export default function PostForm() {
-  // 1. Define your form.
+  const { toast } = useToast();
+  const { organization } = usePersistStore();
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
+      currentOrg: organization,
     },
   });
+
   const { execute, status } = useAction(createPost, {
-    onSuccess(data) {
-      if (data?.error) console.log(data.error);
-      if (data?.success) console.log(data.success);
-    },
-    onExecute(data) {
-      console.log('creating post....');
+    onSuccess() {
+      toast({
+        title: 'Task created!',
+        description: 'Your task has been created successfully',
+        variant: 'success',
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    execute(values);
+    execute({
+      ...values,
+      currentOrg: organization,
+    });
     form.reset();
   }
 
   return (
-    <main>
+    <main className="animate-in fade-in-25 duration-300">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

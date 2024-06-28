@@ -1,0 +1,7 @@
+export enum PostService {
+  NOT_FOUND = 'NOT_FOUND',
+  CREATED = 'CREATED',
+  UPDATED = 'UPDATED',
+  DELETED = 'DELETED',
+  GENERIC_ERROR = 'GENERIC_ERROR',
+}

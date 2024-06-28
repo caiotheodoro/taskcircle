@@ -4,22 +4,25 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
-import PostForm from '@/components/organisms/post-form';
-import Posts from '@/components/organisms/posts';
-import { fetchPosts } from '@/server/actions/create-post';
+import OrganizationList from '@/components/organisms/organization-list';
+import { fetchOrganizations } from '@/server/actions/organization';
 
 export default async function Home() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ['posts'],
-    queryFn: fetchPosts,
+  await queryClient.fetchQuery({
+    queryKey: ['organizations'],
+    queryFn: fetchOrganizations,
+    staleTime: 1000 * 60 * 5,
   });
+
   return (
     <main>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <PostForm />
-        <Posts />
+        <section className="border-t border-gray-200 p-5 md:p-6 ">
+          <h1 className="text-3xl font-bold">Your groups</h1>
+          <OrganizationList />
+        </section>
       </HydrationBoundary>
     </main>
   );

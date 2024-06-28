@@ -10,7 +10,7 @@ export default async function Nav() {
   const user = await auth();
   if (!user) redirect('/api/auth/signin');
   return (
-    <nav>
+    <nav className="animate-in fade-in-25 duration-700">
       <ul className="flex py-8 justify-between items-center text-3xl relative">
         <Logo />
         <li>
