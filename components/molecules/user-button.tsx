@@ -5,7 +5,7 @@ import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
 
-import usePersistStore from '@/app/hooks/stores/persist';
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import { Role } from '@/server/schema';
 import { ClipboardCrop } from '../component/clipboard-crop';
 
 export const UserButton = ({ user }: Session) => {
-  const { organization } = usePersistStore();
+  const { organization } = useOrganizationStore();
 
   const isAdmin = organization?.role === Role.ADMIN;
   return (

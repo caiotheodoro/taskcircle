@@ -113,3 +113,16 @@ export const createOrganization = action(
     if (userOrg[0]) return { success: OrganizationService.CREATED };
   },
 );
+
+const deleteSchema = z.object({
+  id: z.string(),
+});
+export const deleteOrg = action(deleteSchema, async ({ id }) => {
+  try {
+    await db.delete(organization).where(eq(organization.id, id));
+    revalidatePath('/');
+    return { success: OrganizationService.DELETED };
+  } catch (error) {
+    return { error: OrganizationService.GENERIC_ERROR };
+  }
+});

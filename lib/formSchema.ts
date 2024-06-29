@@ -4,7 +4,7 @@ export const formSchema = z.object({
   content: z.string().min(2, {
     message: 'Post must be at least 2 characters.',
   }),
-  currentOrg: z.string(),
+  org_id: z.string().optional(),
 });
 
 export const orgSchema = z.object({
