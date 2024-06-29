@@ -14,30 +14,27 @@ import { organization, posts, warnings } from '../schema';
 
 export const action = createSafeActionClient();
 
-export const createPost = action(
-  formSchema,
-  async ({ content, currentOrg }) => {
-    const session = await auth();
+export const createPost = action(formSchema, async ({ content, org_id }) => {
+  const session = await auth();
 
-    const org = await db.query.organization.findFirst({
-      where: eq(organization.name, currentOrg),
-    });
+  const org = await db.query.organization.findFirst({
+    where: eq(organization.id, org_id),
+  });
 
-    if (!content || !session?.user?.id)
-      return { error: 'Something went wrong' };
+  if (!content || !session?.user?.id || !org?.id)
+    return { error: 'Something went wrong' };
 
-    const newPost = await db.insert(posts).values({
-      content,
-      organization_id: org.id,
-      user_id: session.user.id,
-    });
+  const newPost = await db.insert(posts).values({
+    content,
+    organization_id: org.id,
+    user_id: session.user.id,
+  });
 
-    revalidatePath('/' + currentOrg);
+  revalidatePath('/' + org.name);
 
-    if (!newPost) return { error: 'Could not create post' };
-    if (newPost[0]) return { success: 'Post Created' };
-  },
-);
+  if (!newPost) return { error: 'Could not create post' };
+  if (newPost[0]) return { success: 'Post Created' };
+});
 
 const deleteSchema = z.object({
   id: z.string(),
@@ -52,9 +49,9 @@ export const deletePost = action(deleteSchema, async ({ id }) => {
   }
 });
 
-export const fetchPosts = async (currentOrg: string) => {
+export const fetchPosts = async (org_id: string) => {
   const org = await db.query.organization.findFirst({
-    where: eq(organization.name, currentOrg),
+    where: eq(organization.id, org_id),
   });
 
   if (!org) return { error: 'Organization not found' };

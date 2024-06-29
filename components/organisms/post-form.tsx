@@ -6,7 +6,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import usePersistStore from '@/app/hooks/stores/persist';
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -23,13 +23,13 @@ import { createPost } from '@/server/actions/posts';
 
 export default function PostForm() {
   const { toast } = useToast();
-  const { organization } = usePersistStore();
+  const { organization } = useOrganizationStore();
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
-      currentOrg: organization,
+      org_id: '',
     },
   });
 
@@ -45,13 +45,17 @@ export default function PostForm() {
         queryKey: ['posts'],
       });
     },
+    onError(error) {
+      console.log(error);
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     execute({
       ...values,
-      currentOrg: organization,
+      org_id: organization.id,
     });
+
     form.reset();
   }
 

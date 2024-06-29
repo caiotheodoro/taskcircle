@@ -30,14 +30,7 @@ export default function OrganizationList() {
           {organizations?.success?.map((org) => {
             const { organization } = org;
 
-            return (
-              <OrganizationCard
-                key={organization.id}
-                description={organization.description}
-                name={organization.name}
-                slug={organization.slug}
-              />
-            );
+            return <OrganizationCard key={organization.id} {...organization} />;
           })}
         </AnimatePresence>
       </section>
