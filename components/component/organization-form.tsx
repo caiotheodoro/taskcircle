@@ -78,7 +78,7 @@ export function OrganizationForm() {
   function onSubmit(values: z.infer<typeof orgSchema>) {
     execute({
       ...values,
-      name: organization,
+      name: organization.name,
     });
     form.reset();
   }
@@ -87,7 +87,7 @@ export function OrganizationForm() {
     <Card className="w-full max-w-3xl mx-auto  fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
-          Register {organization}
+          Register {organization.name}
         </CardTitle>
         <CardDescription>Get started with your to-doing!</CardDescription>
       </CardHeader>
