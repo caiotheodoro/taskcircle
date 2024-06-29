@@ -8,6 +8,7 @@ import usePersistStore from '@/app/hooks/stores/persist';
 import { Card, CardContent, CardMotion } from '@/components/ui/card';
 
 import { Button } from '../ui/button';
+import { DeleteWithConfirmation } from './delete-with-confirmation';
 
 interface OrganizationCardProps {
   name: string;
@@ -20,8 +21,6 @@ export function OrganizationCard({
   name,
   slug,
 }: Readonly<OrganizationCardProps>) {
-  const { setOrganization } = usePersistStore();
-
   return (
     <motion.div
       layout
@@ -32,7 +31,6 @@ export function OrganizationCard({
     >
       <Link
         href={`/${name}`}
-        onClick={() => setOrganization(name)}
         className="absolute inset-0 z-10"
         prefetch={false}
       >
@@ -47,9 +45,7 @@ export function OrganizationCard({
         </div>
         <p className="text-muted-foreground">{description}</p>
         <div className="text-sm text-muted-foreground">/{name}</div>
-        <Button variant="destructive" className="ml-auto z-10">
-          Delete
-        </Button>
+        <DeleteWithConfirmation onDelete={() => console.log('deleted!')} />
       </CardContent>
     </motion.div>
   );

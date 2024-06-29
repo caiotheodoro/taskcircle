@@ -10,5 +10,7 @@ export const formSchema = z.object({
 export const orgSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  slug: z.string(),
+  slug: z.string().max(40, {
+    message: 'Slug must be less than 40 characters.',
+  }),
 });
