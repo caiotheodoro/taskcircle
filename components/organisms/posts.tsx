@@ -10,7 +10,7 @@ import { AlertTriangle, Trash } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 
-import usePersistStore from '@/app/hooks/stores/persist';
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { CardMotion } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useGetPosts } from '@/hooks/posts';
@@ -26,13 +26,14 @@ import { useToast } from '../ui/use-toast';
 export default function Posts() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { organization } = usePersistStore();
+  const { organization } = useOrganizationStore();
 
   const {
     data: posts,
     error: postError,
     isLoading,
-  } = useGetPosts(organization);
+  } = useGetPosts(organization.id);
+
   const { execute: executeAddWarning } = useAction(addWarning);
   const { execute: executeChangePostStatus } = useAction(changePostStatus, {
     onSettled(data) {

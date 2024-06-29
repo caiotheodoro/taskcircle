@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import usePersistStore from '@/app/hooks/stores/persist';
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { ORGANIZATION_STATUS } from '@/app/utils/get-org-status';
 import { CardMotion } from '@/components/ui/card';
 import { useGetOrganizationStatus } from '@/hooks/organization';
@@ -21,7 +21,7 @@ export default function Organizations({
 }: Readonly<OrganizationProps>) {
   const { data, error: orgError } = useGetOrganizationStatus(currOrg);
 
-  const { setOrganization, organization } = usePersistStore();
+  const { setOrganization } = useOrganizationStore();
 
   if (orgError) return orgError.message;
 

@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { fetchPosts } from '@/server/actions/posts';
 
-export function useGetPosts(organization_name: string) {
+export function useGetPosts(org_id: string) {
   return useQuery({
-    queryFn: async () => fetchPosts(organization_name),
+    queryFn: async () => fetchPosts(org_id),
     queryKey: ['posts'],
-    enabled: !!organization_name,
+    enabled: !!org_id,
   });
 }
