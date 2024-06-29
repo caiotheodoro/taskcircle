@@ -23,7 +23,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import usePersistStore from '@/app/hooks/stores/persist';
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -49,7 +49,7 @@ import {
 import { useToast } from '../ui/use-toast';
 
 export function OrganizationForm() {
-  const { organization } = usePersistStore();
+  const { organization } = useOrganizationStore();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof orgSchema>>({

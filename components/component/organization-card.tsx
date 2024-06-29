@@ -2,25 +2,47 @@
 
 import Link from 'next/link';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useAction } from 'next-safe-action/hooks';
 
-import usePersistStore from '@/app/hooks/stores/persist';
-import { Card, CardContent, CardMotion } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
+import { deleteOrg } from '@/server/actions/organization';
 
-import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 import { DeleteWithConfirmation } from './delete-with-confirmation';
 
 interface OrganizationCardProps {
   name: string;
   description: string;
   slug: string;
+
+  id: string;
 }
 
 export function OrganizationCard({
   description,
   name,
   slug,
+  id,
 }: Readonly<OrganizationCardProps>) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { execute: executeDeleteOrg } = useAction(deleteOrg, {
+    onSuccess() {
+      toast({
+        title: 'Organization deleted.',
+        description: 'Your task has been deleted successfully',
+        variant: 'success',
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['organizations'],
+      });
+    },
+  });
+
   return (
     <motion.div
       layout
@@ -45,7 +67,7 @@ export function OrganizationCard({
         </div>
         <p className="text-muted-foreground">{description}</p>
         <div className="text-sm text-muted-foreground">/{name}</div>
-        <DeleteWithConfirmation onDelete={() => console.log('deleted!')} />
+        <DeleteWithConfirmation onDelete={() => executeDeleteOrg({ id })} />
       </CardContent>
     </motion.div>
   );
