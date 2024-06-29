@@ -1,15 +1,30 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+type Organization = {
+  id?: string;
+  description?: string;
+  name: string;
+  otp?: string;
+  slug?: string;
+  role?: string;
+};
 interface PersistState {
-  organization: string;
-  setOrganization: (organization: string) => void;
+  organization: Organization;
+  setOrganization: (organization: Organization) => void;
 }
 
 const usePersistStore = create<PersistState>()(
   persist(
     (set) => ({
-      organization: '',
+      organization: {
+        id: '',
+        description: '',
+        name: '',
+        otp: '',
+        slug: '',
+        role: '',
+      },
       setOrganization: (organization) => set({ organization }),
     }),
     {

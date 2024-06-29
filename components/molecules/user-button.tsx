@@ -1,10 +1,11 @@
 'use client';
 
-import { LogOut } from 'lucide-react';
+import { LogOut, Users } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
 
+import usePersistStore from '@/app/hooks/stores/persist';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -12,8 +13,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Role } from '@/server/schema';
+
+import { ClipboardCrop } from '../component/clipboard-crop';
 
 export const UserButton = ({ user }: Session) => {
+  const { organization } = usePersistStore();
+
+  const isAdmin = organization?.role === Role.ADMIN;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -32,12 +39,24 @@ export const UserButton = ({ user }: Session) => {
           <span className="text-xs text-secondary-foreground">
             {user?.email}
           </span>
+          {organization?.otp && (
+            <div className="flex items-center justify-center gap-2 w-full pt-3">
+              <ClipboardCrop otp={organization.otp} />
+            </div>
+          )}
         </div>
+
+        {organization?.otp && isAdmin && (
+          <DropdownMenuItem className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500">
+            <Users className="mr-4 px-1" />
+            Group Members
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
-          className="py-2 px-2 flex items-center font-medium hover:text-destructive cursor-pointer "
+          className="py-2 px-2 flex items-center font-medium hover:text-destructive cursor-pointer"
           onClick={() => signOut()}
         >
-          <LogOut className="mr-4 px-1" /> Sign out
+          <LogOut className="mr-4 px-1" /> Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

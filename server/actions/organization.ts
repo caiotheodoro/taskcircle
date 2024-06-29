@@ -35,7 +35,10 @@ export const getOrganization = action(getOrganizationSchema, async (input) => {
     where: eq(organization.name, input.organization_name),
   });
 
-  if (!org) return ORGANIZATION_STATUS.CLAIMABLE;
+  if (!org)
+    return {
+      status: ORGANIZATION_STATUS.CLAIMABLE,
+    };
 
   const userOrg = await db.query.userOrganizations.findFirst({
     where: and(
@@ -44,10 +47,18 @@ export const getOrganization = action(getOrganizationSchema, async (input) => {
     ),
   });
 
-  if (userOrg.role === Role.ADMIN) return ORGANIZATION_STATUS.OWNED;
-  if (userOrg.role === Role.MEMBER) return ORGANIZATION_STATUS.MEMBER;
+  if (!userOrg) return { status: ORGANIZATION_STATUS.CLAIMED };
 
-  return ORGANIZATION_STATUS.CLAIMED;
+  if (userOrg.role === Role.ADMIN)
+    return {
+      status: ORGANIZATION_STATUS.OWNED,
+      organization: { ...org, role: userOrg.role },
+    };
+  if (userOrg.role === Role.MEMBER)
+    return {
+      status: ORGANIZATION_STATUS.MEMBER,
+      organization: { ...org, role: userOrg.role },
+    };
 });
 
 export const fetchOrganizations = async () => {

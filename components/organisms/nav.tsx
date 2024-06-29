@@ -6,8 +6,11 @@ import { UserButton } from '@/components/molecules/user-button';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/server/auth';
 
+import OrgPanel from './user-panel';
+
 export default async function Nav() {
   const user = await auth();
+
   if (!user) redirect('/api/auth/signin');
   return (
     <nav className="animate-in fade-in-25 duration-700">
@@ -19,7 +22,10 @@ export default async function Nav() {
               <Link href={'/auth/login'}>Sign In</Link>
             </Button>
           ) : (
-            <UserButton expires={user.expires} user={user.user} />
+            <div className="flex items-center">
+              <OrgPanel />
+              <UserButton expires={user.expires} user={user.user} />
+            </div>
           )}
         </li>
       </ul>

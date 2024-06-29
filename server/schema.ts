@@ -1,9 +1,10 @@
 import type { AdapterAccount } from '@auth/core/adapters';
-import { createId } from '@paralleldrive/cuid2';
+import { createId, init } from '@paralleldrive/cuid2';
 import { relations } from 'drizzle-orm';
 import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';
 import { primaryKey, timestamp } from 'drizzle-orm/pg-core';
 
+const cre = init({ length: 5 });
 export const posts = pgTable('posts', {
   id: text('id')
     .primaryKey()
@@ -82,6 +83,10 @@ export const organization = pgTable('organization', {
   name: text('name').notNull(),
   slug: text('slug').notNull(),
   description: text('description'),
+  //OTP: a mix of numbers and letters of length 5
+  otp: text('otp')
+    .notNull()
+    .$defaultFn(() => cre().toUpperCase()),
 });
 
 export enum Role {
@@ -96,10 +101,14 @@ export const userOrganizations = pgTable('user_organizations', {
     .$defaultFn(() => createId()),
   user_id: text('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
   organization_id: text('organization_id')
     .notNull()
-    .references(() => organization.id),
+    .references(() => organization.id, {
+      onDelete: 'cascade',
+    }),
   role: text('role').$type<Role>().notNull(),
 });
 
@@ -149,3 +158,23 @@ export const warningsRelations = relations(warnings, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+enum status {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  REJECTED = 'rejected',
+}
+
+export const organizationInvites = pgTable('organization_invites', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => createId()),
+  email: text('email').notNull(),
+  organization_id: text('organization_id')
+    .notNull()
+    .references(() => organization.id, {
+      onDelete: 'cascade',
+    }),
+  status: text('status').$type<status>().notNull().default(status.PENDING),
+});
