@@ -8,6 +8,7 @@ import { CardMotion } from '@/components/ui/card';
 import { useGetOrganizationStatus } from '@/hooks/organization';
 
 import { OrganizationForm } from '../component/organization-form';
+import { OtpCard } from '../component/otp-card';
 import PostForm from './post-form';
 import Posts from './posts';
 
@@ -18,17 +19,21 @@ interface OrganizationProps {
 export default function Organizations({
   currOrg,
 }: Readonly<OrganizationProps>) {
-  const { data: status, error: orgError } = useGetOrganizationStatus(currOrg);
+  const { data, error: orgError } = useGetOrganizationStatus(currOrg);
 
-  const { setOrganization } = usePersistStore();
+  const { setOrganization, organization } = usePersistStore();
 
   if (orgError) return orgError.message;
 
   useEffect(() => {
-    setOrganization(currOrg);
-  }, [currOrg, setOrganization]);
+    setOrganization(
+      data?.organization ?? {
+        name: currOrg,
+      },
+    );
+  }, [currOrg, setOrganization, data]);
 
-  switch (status) {
+  switch (data?.status) {
     case ORGANIZATION_STATUS.CLAIMABLE:
       return (
         <CardMotion
@@ -44,7 +49,7 @@ export default function Organizations({
           layout
           className="flex flex-col mt-6 font-medium border-none shadow-none"
         >
-          claimed
+          <OtpCard />
         </CardMotion>
       );
     case ORGANIZATION_STATUS.OWNED:
