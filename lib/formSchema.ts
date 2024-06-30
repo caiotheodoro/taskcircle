@@ -14,3 +14,8 @@ export const orgSchema = z.object({
     message: 'Slug must be less than 40 characters.',
   }),
 });
+
+export const requestMembershipSchema = z.object({
+  org_id: z.string(),
+  otp: z.string(),
+});

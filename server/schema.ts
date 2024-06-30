@@ -170,7 +170,11 @@ export const organizationInvites = pgTable('organization_invites', {
     .primaryKey()
     .notNull()
     .$defaultFn(() => createId()),
-  email: text('email').notNull(),
+  user_id: text('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
   organization_id: text('organization_id')
     .notNull()
     .references(() => organization.id, {
