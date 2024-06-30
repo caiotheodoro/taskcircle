@@ -24,7 +24,7 @@ export default function OrganizationList() {
       </section>
     );
 
-  if (organizations?.success.length === 0) return <WelcomePage />;
+  if (organizations?.success?.length === 0) return <WelcomePage />;
   if (organizations?.success)
     return (
       <>

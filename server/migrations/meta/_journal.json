@@ -183,6 +183,20 @@
       "when": 1719705747714,
       "tag": "0025_early_riptide",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1719736994015,
+      "tag": "0026_spotty_owl",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "5",
+      "when": 1719737389674,
+      "tag": "0027_known_nitro",
+      "breakpoints": true
     }
   ]
 }

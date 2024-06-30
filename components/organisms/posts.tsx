@@ -14,11 +14,7 @@ import useOrganizationStore from '@/app/hooks/stores/organization';
 import { CardMotion } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useGetPosts } from '@/hooks/posts';
-import {
-  addWarning,
-  changePostStatus,
-  deletePost,
-} from '@/server/actions/posts';
+import { changePostStatus, deletePost } from '@/server/actions/posts';
 
 import CententralizedContent from '../molecules/cententralized-content';
 import { Skeleton } from '../ui/skeleton';
@@ -35,7 +31,6 @@ export default function Posts() {
     isLoading,
   } = useGetPosts(organization.id);
 
-  const { execute: executeAddWarning } = useAction(addWarning);
   const { execute: executeChangePostStatus } = useAction(changePostStatus, {
     onSettled(data) {
       queryClient.invalidateQueries({
@@ -58,13 +53,6 @@ export default function Posts() {
   });
   const { data: session } = useSession();
 
-  const handleAddWarning = useCallback(
-    (post_id: string) => {
-      executeAddWarning({ post_id, user_id: session?.user.id });
-    },
-    [executeAddWarning, session],
-  );
-
   const handleChangeStatus = useCallback(
     (post_id: string, status: boolean) => {
       executeChangePostStatus({ post_id, status, user_id: session?.user.id });
@@ -86,7 +74,7 @@ export default function Posts() {
 
   if (postError) return postError.message;
 
-  if (posts?.success.length === 0)
+  if (posts?.success?.length === 0)
     return (
       <CententralizedContent>
         <h1 className="text-2xl font-bold text-center">No tasks found!</h1>
@@ -121,15 +109,6 @@ export default function Posts() {
                   <h2 className="text-sm font-normal">{post.author.name}</h2>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex items-center gap-1 cursor-pointer">
-                    <AlertTriangle
-                      className="w-4 text-yellow-500"
-                      onClick={() => handleAddWarning(post.id)}
-                    />
-                    <p className="text-sm text-yellow-500">
-                      {post.warnings.length}
-                    </p>
-                  </div>
                   <Trash
                     onClick={() => executeDeletePost({ id: post.id })}
                     className="w-4 text-red-400 cursor-pointer "

@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { Ratelimit } from '@upstash/ratelimit';
-import { and, eq, ne } from 'drizzle-orm';
+import { and, eq, gt, ne } from 'drizzle-orm';
 import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
@@ -242,13 +242,14 @@ export const listUsersAndPendingInvites = action(
         where: and(
           eq(organizationInvites.organization_id, org.id),
           eq(organizationInvites.status, OrganizationInviteStatus.PENDING),
+          gt(organizationInvites.expires_at, new Date()),
         ),
         with: {
           user: true,
         },
       });
 
-      console.log(users, invites);
+      console.log(invites);
 
       return { success: { users, invites } };
     } catch (error) {
@@ -293,6 +294,7 @@ export const changePendingInvite = action(
         where: and(
           eq(organizationInvites.organization_id, org.id),
           eq(organizationInvites.user_id, user_id),
+          gt(organizationInvites.expires_at, new Date()),
         ),
       });
 
