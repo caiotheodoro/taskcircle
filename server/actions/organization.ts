@@ -26,7 +26,7 @@ export const action = createSafeActionClient();
 
 const rateLimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(5, '120s'),
+  limiter: Ratelimit.slidingWindow(6, '120s'),
 });
 
 const getOrganizationSchema = z.object({
@@ -177,7 +177,10 @@ export const requestMembership = action(
       if (!org) return { error: OrganizationService.NOT_FOUND };
 
       if (otp.toUpperCase() !== org.otp)
-        return { error: OrganizationService.INVALID_OTP, retries: remaining };
+        return {
+          error: OrganizationService.INVALID_OTP,
+          retries: remaining - 1,
+        };
 
       const orgInvite = await db.insert(organizationInvites).values({
         organization_id: org.id,
