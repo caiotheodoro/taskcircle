@@ -33,7 +33,7 @@ export default function WelcomePage() {
               <div className="flex flex-col justify-center space-y-6">
                 <div className="space-y-6">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Collaborate on tasks with your team
+                    Collaborate on tasks with your group
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     Organize your group's tasks and projects in one place.
@@ -106,6 +106,7 @@ export default function WelcomePage() {
             href="https://github.com/caiotheodoro"
             className="text-xs hover:underline underline-offset-4"
             prefetch={false}
+            target="_blank"
           >
             <FaGithub className="w-5 h-5" />
           </Link>
@@ -113,6 +114,7 @@ export default function WelcomePage() {
             href="https://www.linkedin.com/in/caiotheodoro1/"
             className="text-xs hover:underline underline-offset-4"
             prefetch={false}
+            target="_blank"
           >
             <FaLinkedin className="w-5 h-5" />
           </Link>
@@ -120,6 +122,7 @@ export default function WelcomePage() {
             href="https://caiotheodoro.dev"
             className="text-xs hover:underline underline-offset-4"
             prefetch={false}
+            target="_blank"
           >
             <Globe className="w-5 h-5" />
           </Link>

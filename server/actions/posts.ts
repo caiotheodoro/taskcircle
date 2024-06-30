@@ -10,7 +10,7 @@ import { formSchema } from '@/lib/formSchema';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
 
-import { organization, posts, warnings } from '../schema';
+import { organization, posts } from '../schema';
 
 export const action = createSafeActionClient();
 
@@ -59,7 +59,6 @@ export const fetchPosts = async (org_id: string) => {
   const orgPosts = await db.query.posts.findMany({
     with: {
       author: true,
-      warnings: true,
     },
     where: eq(posts.organization_id, org?.id),
     orderBy: (posts, { desc }) => [desc(posts.timestamp)],
@@ -67,41 +66,6 @@ export const fetchPosts = async (org_id: string) => {
   if (!orgPosts) return { error: 'No posts !' };
   if (orgPosts) return { success: orgPosts };
 };
-
-const addWarningSchema = z.object({
-  post_id: z.string(),
-  user_id: z.string(),
-});
-
-export const addWarning = action(
-  addWarningSchema,
-  async ({ post_id, user_id }) => {
-    const existingWarning = await db.query.warnings.findFirst({
-      where: and(eq(warnings.post_id, post_id), eq(warnings.user_id, user_id)),
-    });
-    if (existingWarning) {
-      await db.delete(warnings).where(eq(warnings.id, existingWarning.id));
-      revalidatePath('/');
-      return { success: 'Removed Warning' };
-    }
-
-    if (!existingWarning) {
-      const warning = await db
-        .insert(warnings)
-        .values({
-          post_id,
-          user_id,
-        })
-        .returning()
-        .catch((error) => {
-          if (error) return { error: error };
-        });
-
-      revalidatePath('/');
-      return { success: warning };
-    }
-  },
-);
 
 const changeStatusSchema = z.object({
   status: z.boolean(),

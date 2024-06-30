@@ -3,7 +3,7 @@ import { create } from 'zustand';
 type Organization = {
   id?: string;
   description?: string;
-  name: string;
+  name?: string;
   otp?: string;
   slug?: string;
   role?: string;

@@ -24,17 +24,7 @@ export default function Organizations({
 }: Readonly<OrganizationProps>) {
   const { data, error: orgError } = useGetOrganizationStatus(currOrg);
 
-  const { setOrganization } = useOrganizationStore();
-
   if (orgError) return orgError.message;
-
-  useEffect(() => {
-    setOrganization(
-      data?.organization ?? {
-        name: currOrg,
-      },
-    );
-  }, [currOrg, setOrganization, data]);
 
   switch (data?.status) {
     case ORGANIZATION_STATUS.CLAIMABLE:
