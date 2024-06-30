@@ -21,7 +21,7 @@ export default async function Organization({
 
   await queryClient.fetchQuery({
     queryKey: ['organizations'],
-    queryFn: () => getOrganization({ organization_name: organization }),
+    queryFn: () => getOrganization({ org_name: organization }),
     staleTime: 1000 * 60 * 5,
   });
 

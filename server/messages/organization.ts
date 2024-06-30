@@ -12,4 +12,6 @@ export enum OrganizationService {
   ERROR_CREATING_INVITE = 'ERROR_CREATING_INVITE',
 
   CLAIMED = 'CLAIMED',
+
+  NOT_ALLOWED = 'NOT_ALLOWED',
 }

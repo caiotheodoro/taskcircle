@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { LogOut, Users } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
@@ -19,8 +21,9 @@ import { ClipboardCrop } from '../component/clipboard-crop';
 
 export const UserButton = ({ user }: Session) => {
   const { organization } = useOrganizationStore();
-
+  const router = useRouter();
   const isAdmin = organization?.role === Role.ADMIN;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -47,7 +50,10 @@ export const UserButton = ({ user }: Session) => {
         </div>
 
         {organization?.otp && isAdmin && (
-          <DropdownMenuItem className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500">
+          <DropdownMenuItem
+            className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
+            onClick={() => router.push(`/${organization?.name}/members`)}
+          >
             <Users className="mr-4 px-1" />
             Group Members
           </DropdownMenuItem>
