@@ -26,21 +26,6 @@ export const posts = pgTable('posts', {
     }),
 });
 
-export const warnings = pgTable('warnings', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  post_id: text('post_id')
-    .notNull()
-    .references(() => posts.id, {
-      onDelete: 'cascade',
-    }),
-  user_id: text('user_id')
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
-    }),
-});
 //a user can be a member of multiple organizations
 export const users = pgTable('user', {
   id: text('id').notNull().primaryKey(),
@@ -137,7 +122,6 @@ export const organizationRelations = relations(organization, ({ many }) => ({
 }));
 
 export const postsRelations = relations(posts, ({ many, one }) => ({
-  warnings: many(warnings),
   organization: one(organization, {
     fields: [posts.organization_id],
     references: [organization.id],
@@ -148,18 +132,7 @@ export const postsRelations = relations(posts, ({ many, one }) => ({
   }),
 }));
 
-export const warningsRelations = relations(warnings, ({ one }) => ({
-  post: one(posts, {
-    fields: [warnings.post_id],
-    references: [posts.id],
-  }),
-  user: one(users, {
-    fields: [warnings.user_id],
-    references: [users.id],
-  }),
-}));
-
-enum status {
+export enum OrganizationInviteStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
@@ -180,7 +153,13 @@ export const organizationInvites = pgTable('organization_invites', {
     .references(() => organization.id, {
       onDelete: 'cascade',
     }),
-  status: text('status').$type<status>().notNull().default(status.PENDING),
+  status: text('status')
+    .$type<OrganizationInviteStatus>()
+    .notNull()
+    .default(OrganizationInviteStatus.PENDING),
+  expires_at: timestamp('expires_at').$defaultFn(
+    () => new Date(Date.now() + 1000 * 60 * 60 * 24),
+  ),
 });
 
 //organizationInvites can have ONLY an combination of user_id and organization_id
