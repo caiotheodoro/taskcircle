@@ -4,6 +4,7 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
+import CententralizedContent from '@/components/molecules/cententralized-content';
 import Organizations from '@/components/organisms/organizations';
 import { getOrganization } from '@/server/actions/organization';
 
@@ -27,7 +28,7 @@ export default async function Organization({
   //verify if the organization name is valid (less than 40 characters, only letters and numbers and -)
   if (!/^[a-zA-Z0-9-]{1,40}$/.test(organization)) {
     return (
-      <div className="mx-auto max-w-md space-y-6 p-4 w-full  fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <CententralizedContent>
         <h1 className="text-2xl font-bold text-center">
           Invalid organization name
         </h1>
@@ -35,7 +36,7 @@ export default async function Organization({
           The organization name must be between 1 and 40 characters long and can
           only contain letters, numbers and hyphens (-)
         </p>
-      </div>
+      </CententralizedContent>
     );
   }
 
