@@ -100,10 +100,10 @@ export function OrganizationForm() {
                 name="slug"
                 render={({ field }) => (
                   <FormItem className="flex w-full flex-col">
-                    <FormLabel>Organization Slug</FormLabel>
+                    <FormLabel>Group Slug</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter a unique slug for your organization"
+                        placeholder="Enter a unique slug for your group"
                         {...field}
                       />
                     </FormControl>

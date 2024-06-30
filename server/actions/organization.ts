@@ -61,8 +61,22 @@ export const getOrganization = action(getOrganizationSchema, async (input) => {
     ),
   });
 
-  if (!userOrg)
-    return { status: ORGANIZATION_STATUS.CLAIMED, organization: org };
+  if (!userOrg) {
+    const orgInvite = await db.query.organizationInvites.findFirst({
+      where: and(
+        eq(organizationInvites.organization_id, org.id),
+        eq(organizationInvites.user_id, session.user.id),
+      ),
+    });
+
+    return {
+      status: ORGANIZATION_STATUS.CLAIMED,
+      organization: {
+        ...org,
+        inviteStatus: orgInvite?.status,
+      },
+    };
+  }
 
   if (userOrg.role === Role.ADMIN)
     return {
@@ -151,8 +165,8 @@ export const requestMembership = action(
   async ({ org_id, otp }) => {
     try {
       const ip = headers().get('x-forwarded-for');
-      const { remaining, success: limitReached } = await rateLimit.limit(ip);
-      if (limitReached) return { error: MessageService.LIMIT_REACHED };
+      const { remaining } = await rateLimit.limit(ip);
+      if (remaining === 0) return { error: MessageService.LIMIT_REACHED };
 
       const session = await auth();
 
@@ -162,7 +176,7 @@ export const requestMembership = action(
 
       if (!org) return { error: OrganizationService.NOT_FOUND };
 
-      if (otp !== org.otp)
+      if (otp.toUpperCase() !== org.otp)
         return { error: OrganizationService.INVALID_OTP, retries: remaining };
 
       const orgInvite = await db.insert(organizationInvites).values({
