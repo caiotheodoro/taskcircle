@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import { Members } from '@/components/organisms/members';
-import { listUsersAndPendingInvites } from '@/server/actions/organization';
+import { listUsersAndPendingInvites } from '@/server/actions/membership';
 
 interface ManageProps {
   params: {
@@ -18,7 +18,6 @@ interface ManageProps {
 export default async function Manage({
   params: { organization },
 }: Readonly<ManageProps>) {
-  console.log(organization);
   const queryClient = new QueryClient();
 
   await queryClient.fetchQuery({

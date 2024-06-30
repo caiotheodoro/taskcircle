@@ -2,26 +2,25 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
 import { formSchema } from '@/lib/formSchema';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
+import { OrganizationService } from '@/server/messages/organization';
+import { PostService } from '@/server/messages/posts';
 import { organization, posts } from '@/server/schema';
 
 export const action = createSafeActionClient();
 
 export const createPost = action(formSchema, async ({ content, org_id }) => {
   const session = await auth();
-
-  const org = await db.query.organization.findFirst({
-    where: eq(organization.id, org_id),
-  });
+  const org = await fetchOrganizationById(org_id);
 
   if (!content || !session?.user?.id || !org?.id)
-    return { error: 'Something went wrong' };
+    return { error: PostService.GENERIC_ERROR };
 
   const newPost = await db.insert(posts).values({
     content,
@@ -31,8 +30,8 @@ export const createPost = action(formSchema, async ({ content, org_id }) => {
 
   revalidatePath('/' + org.name);
 
-  if (!newPost) return { error: 'Could not create post' };
-  if (newPost[0]) return { success: 'Post Created' };
+  if (!newPost) return { error: PostService.GENERIC_ERROR };
+  if (newPost[0]) return { success: PostService.CREATED };
 });
 
 const deleteSchema = z.object({
@@ -42,28 +41,27 @@ export const deletePost = action(deleteSchema, async ({ id }) => {
   try {
     await db.delete(posts).where(eq(posts.id, id));
     revalidatePath('/');
-    return { success: 'Product deleted' };
+    return { success: PostService.DELETED };
   } catch (error) {
-    return { error: 'Something went wrong' };
+    return { error: PostService.GENERIC_ERROR };
   }
 });
 
-export const fetchPosts = async (org_id: string) => {
-  const org = await db.query.organization.findFirst({
-    where: eq(organization.id, org_id),
-  });
+export const fetchPosts = async (org_id) => {
+  const org = await fetchOrganizationById(org_id);
 
-  if (!org) return { error: 'Organization not found' };
+  if (!org) return { error: OrganizationService.NOT_FOUND };
 
   const orgPosts = await db.query.posts.findMany({
     with: {
       author: true,
     },
-    where: eq(posts.organization_id, org?.id),
+    where: eq(posts.organization_id, org.id),
     orderBy: (posts, { desc }) => [desc(posts.timestamp)],
   });
-  if (!orgPosts) return { error: 'No posts !' };
-  if (orgPosts) return { success: orgPosts };
+
+  if (!orgPosts) return { error: PostService.NOT_FOUND };
+  return { success: orgPosts };
 };
 
 const changeStatusSchema = z.object({
@@ -79,8 +77,17 @@ export const changePostStatus = action(
       .update(posts)
       .set({ status, updatedBy: user_id })
       .where(eq(posts.id, post_id));
+
     revalidatePath('/');
-    if (!updatedPost) return { error: 'Could not update post' };
-    if (updatedPost) return { success: 'Post updated' };
+
+    if (!updatedPost) return { error: PostService.GENERIC_ERROR };
+    return { success: PostService.UPDATED };
   },
 );
+
+// Helper function to fetch organization by ID
+const fetchOrganizationById = async (orgId) => {
+  return await db.query.organization.findFirst({
+    where: eq(organization.id, orgId),
+  });
+};

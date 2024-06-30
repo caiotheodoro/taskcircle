@@ -31,7 +31,7 @@ export default function Posts() {
   } = useGetPosts(organization.id);
 
   const { execute: executeChangePostStatus } = useAction(changePostStatus, {
-    onSettled(data) {
+    onSettled() {
       queryClient.invalidateQueries({
         queryKey: ['posts'],
       });
@@ -110,7 +110,7 @@ export default function Posts() {
                 <div className="flex gap-3">
                   <Trash
                     onClick={() => executeDeletePost({ id: post.id })}
-                    className="w-4 text-red-400 cursor-pointer "
+                    className="w-4 text-red-400 cursor-pointer hover:text-red-700 transition-colors"
                   />
                 </div>
               </div>

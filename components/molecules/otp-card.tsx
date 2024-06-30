@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/input-otp';
 import { useToast } from '@/components/ui/use-toast';
 import { requestMembershipSchema } from '@/lib/formSchema';
-import { requestMembership } from '@/server/actions/organization';
+import { requestMembership } from '@/server/actions/membership';
 import { MessageService } from '@/server/messages/generic';
 import { OrganizationService } from '@/server/messages/organization';
 
