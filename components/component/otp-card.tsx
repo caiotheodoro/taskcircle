@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
@@ -18,6 +19,7 @@ import { useToast } from '../ui/use-toast';
 export function OtpCard() {
   const { organization } = useOrganizationStore();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof requestMembershipSchema>>({
     resolver: zodResolver(requestMembershipSchema),
     defaultValues: {
@@ -27,13 +29,17 @@ export function OtpCard() {
 
   const { execute, status } = useAction(requestMembership, {
     onSuccess(data) {
-      console.log(data);
-      if (!data.error)
+      if (!data.error) {
         toast({
           title: 'Membership Requested!',
           description: 'Wait for the organization to accept your request',
           variant: 'success',
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ['organization-status'],
+        });
+      }
 
       if (data.error === MessageService.LIMIT_REACHED)
         toast({
@@ -99,12 +105,13 @@ export function OtpCard() {
                 </FormItem>
               )}
             />
+
             <Button
               type="submit"
-              className="w-full max-w-56"
-              disabled={status === 'executing'}
+              className={`w-full max-w-56 capitalize ${!!organization.inviteStatus && 'bg-success'}`}
+              disabled={status === 'executing' || !!organization.inviteStatus}
             >
-              Join Group
+              {organization?.inviteStatus || 'Join Group'}
             </Button>
           </div>
         </form>
