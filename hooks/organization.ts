@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { listUsersAndPendingInvites } from '@/server/actions/membership';
 import {
   fetchOrganizations,
   getOrganization,
-  listUsersAndPendingInvites,
 } from '@/server/actions/organization';
 
 export function useGetOrganizationStatus(org_name: string) {

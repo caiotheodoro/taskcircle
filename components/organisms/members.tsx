@@ -12,7 +12,7 @@ import { useGetUsersAndInvites } from '@/hooks/organization';
 import {
   changePendingInvite,
   deleteMembership,
-} from '@/server/actions/organization';
+} from '@/server/actions/membership';
 import { OrganizationInviteStatus } from '@/server/schema';
 
 export function Members() {
@@ -23,7 +23,6 @@ export function Members() {
 
   const { execute } = useAction(changePendingInvite, {
     onSuccess(data) {
-      console.log(data);
       if (!data?.error)
         toast({
           title: 'Invite Updated.',
@@ -41,7 +40,6 @@ export function Members() {
     user_id: string,
     status: OrganizationInviteStatus,
   ) => {
-    console.log(data);
     execute({
       org_id: organization.id,
       user_id,
