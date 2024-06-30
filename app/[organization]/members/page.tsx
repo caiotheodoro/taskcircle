@@ -6,7 +6,7 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
-import { Members } from '@/components/component/members';
+import { Members } from '@/components/organisms/members';
 import { listUsersAndPendingInvites } from '@/server/actions/organization';
 
 interface ManageProps {

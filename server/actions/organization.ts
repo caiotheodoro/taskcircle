@@ -11,17 +11,16 @@ import * as z from 'zod';
 import { orgSchema } from '@/lib/formSchema';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
-import { redis } from '@/server/upstash';
-
-import { MessageService } from '../messages/generic';
-import { OrganizationService } from '../messages/organization';
+import { MessageService } from '@/server/messages/generic';
+import { OrganizationService } from '@/server/messages/organization';
 import {
   OrganizationInviteStatus,
   Role,
   organization,
   organizationInvites,
   userOrganizations,
-} from '../schema';
+} from '@/server/schema';
+import { redis } from '@/server/upstash';
 
 export const action = createSafeActionClient();
 

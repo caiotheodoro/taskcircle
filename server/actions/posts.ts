@@ -9,8 +9,7 @@ import * as z from 'zod';
 import { formSchema } from '@/lib/formSchema';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
-
-import { organization, posts } from '../schema';
+import { organization, posts } from '@/server/schema';
 
 export const action = createSafeActionClient();
 
