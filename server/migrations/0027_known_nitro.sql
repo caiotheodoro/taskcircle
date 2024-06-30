@@ -1,0 +1,1 @@
+ALTER TABLE "organization_invites" ADD COLUMN "expires_at" timestamp;

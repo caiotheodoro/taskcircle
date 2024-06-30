@@ -77,7 +77,7 @@ export function Members() {
                   <h2 className="text-xl font-semibold">Users</h2>
                 </div>
                 <div className="mt-4 grid gap-4">
-                  {data?.success.users.length > 0 ? (
+                  {data?.success.users?.length > 0 ? (
                     data?.success.users.map((user) => {
                       const {
                         user: { email, image, name, id },
@@ -126,7 +126,7 @@ export function Members() {
                   <h2 className="text-xl font-semibold">Pending Invites</h2>
                 </div>
                 <div className="mt-4 grid gap-4">
-                  {data?.success.invites.length > 0 ? (
+                  {data?.success.invites?.length > 0 ? (
                     data?.success.invites.map((user) => {
                       const {
                         user: { email, image, name, id },
