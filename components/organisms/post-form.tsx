@@ -45,9 +45,7 @@ export default function PostForm() {
         queryKey: ['posts'],
       });
     },
-    onError(error) {
-      console.log(error);
-    },
+    onError(error) {},
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
