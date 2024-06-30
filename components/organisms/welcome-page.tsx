@@ -5,16 +5,11 @@
  */
 import { useState } from 'react';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { Globe } from 'lucide-react';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
-
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-import { Avatar, AvatarFallback } from '../ui/avatar';
 
 export default function WelcomePage() {
   const { push: redirect } = useRouter();
@@ -36,7 +31,7 @@ export default function WelcomePage() {
                     Collaborate on tasks with your group
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Organize your group's tasks and projects in one place.
+                    Organize your group&apos;s tasks and projects in one place.
                     Create groups, assign tasks, and track progress together!
                   </p>
                 </div>
@@ -98,24 +93,5 @@ export default function WelcomePage() {
         </section>
       </main>
     </div>
-  );
-}
-
-function MountainIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
   );
 }

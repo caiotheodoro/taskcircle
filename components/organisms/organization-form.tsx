@@ -33,11 +33,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { orgSchema } from '@/lib/formSchema';
-import { createOrganization } from '@/server/actions/organization';
-
 import {
   Form,
   FormControl,
@@ -45,8 +40,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { useToast } from '../ui/use-toast';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { orgSchema } from '@/lib/formSchema';
+import { createOrganization } from '@/server/actions/organization';
 
 export function OrganizationForm() {
   const { organization } = useOrganizationStore();

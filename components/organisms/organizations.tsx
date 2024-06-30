@@ -1,14 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-
-import useOrganizationStore from '@/app/hooks/stores/organization';
 import { ORGANIZATION_STATUS } from '@/app/utils/get-org-status';
+import { OtpCard } from '@/components/molecules/otp-card';
 import { CardMotion } from '@/components/ui/card';
 import { useGetOrganizationStatus } from '@/hooks/organization';
 
-import { OrganizationForm } from '../component/organization-form';
-import { OtpCard } from '../component/otp-card';
+import { OrganizationForm } from './organization-form';
 import PostForm from './post-form';
 import Posts from './posts';
 

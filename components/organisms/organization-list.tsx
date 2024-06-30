@@ -4,11 +4,11 @@ import React from 'react';
 
 import { AnimatePresence } from 'framer-motion';
 
+import { OrganizationCard } from '@/components/molecules/organization-card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useGetOrganizations } from '@/hooks/organization';
 
-import { OrganizationCard } from '../component/organization-card';
-import WelcomePage from '../component/welcome-page';
-import { Skeleton } from '../ui/skeleton';
+import WelcomePage from './welcome-page';
 
 export default function OrganizationList() {
   const { data: organizations, error, isLoading } = useGetOrganizations();
