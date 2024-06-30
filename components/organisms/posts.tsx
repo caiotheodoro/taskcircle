@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertTriangle, Trash } from 'lucide-react';
+import { AlertTriangle, GhostIcon, Trash } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 
@@ -20,6 +20,7 @@ import {
   deletePost,
 } from '@/server/actions/posts';
 
+import CententralizedContent from '../molecules/cententralized-content';
 import { Skeleton } from '../ui/skeleton';
 import { useToast } from '../ui/use-toast';
 
@@ -47,7 +48,7 @@ export default function Posts() {
       toast({
         title: 'Task deleted.',
         description: 'Your task has been deleted successfully',
-        variant: 'destructive',
+        variant: 'success',
       });
 
       queryClient.invalidateQueries({
@@ -84,6 +85,14 @@ export default function Posts() {
     );
 
   if (postError) return postError.message;
+
+  if (posts?.success.length === 0)
+    return (
+      <CententralizedContent>
+        <h1 className="text-2xl font-bold text-center">No tasks found!</h1>
+        <GhostIcon className="w-24 h-24 text-primary" />
+      </CententralizedContent>
+    );
   if (posts?.success)
     return (
       <CardMotion

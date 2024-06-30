@@ -170,7 +170,11 @@ export const organizationInvites = pgTable('organization_invites', {
     .primaryKey()
     .notNull()
     .$defaultFn(() => createId()),
-  email: text('email').notNull(),
+  user_id: text('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
   organization_id: text('organization_id')
     .notNull()
     .references(() => organization.id, {
@@ -178,3 +182,18 @@ export const organizationInvites = pgTable('organization_invites', {
     }),
   status: text('status').$type<status>().notNull().default(status.PENDING),
 });
+
+//organizationInvites can have ONLY an combination of user_id and organization_id
+export const organizationInvitesRelations = relations(
+  organizationInvites,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [organizationInvites.user_id],
+      references: [users.id],
+    }),
+    organization: one(organization, {
+      fields: [organizationInvites.organization_id],
+      references: [organization.id],
+    }),
+  }),
+);

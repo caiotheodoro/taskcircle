@@ -15,6 +15,9 @@ import Posts from './posts';
 interface OrganizationProps {
   currOrg: string;
 }
+export const config = {
+  runtime: 'edge',
+};
 
 export default function Organizations({
   currOrg,
