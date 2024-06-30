@@ -7,6 +7,7 @@ type Organization = {
   otp?: string;
   slug?: string;
   role?: string;
+  inviteStatus?: string;
 };
 interface IOrganizationStore {
   organization: Organization;
@@ -15,12 +16,7 @@ interface IOrganizationStore {
 
 const initialState = {
   organization: {
-    id: '',
-    description: '',
     name: '',
-    otp: '',
-    slug: '',
-    role: '',
   },
 };
 
