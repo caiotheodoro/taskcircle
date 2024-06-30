@@ -20,7 +20,6 @@ export default async function Home() {
     <main>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <section className="border-t border-gray-200 p-5 md:p-6 ">
-          <h1 className="text-3xl font-bold">Your groups</h1>
           <OrganizationList />
         </section>
       </HydrationBoundary>
