@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Role } from '@/server/schema';
 
-import { ClipboardCrop } from '../component/clipboard-crop';
+import { ClipboardCrop } from './clipboard-crop';
 
 export const UserButton = ({ user }: Session) => {
   const { organization } = useOrganizationStore();

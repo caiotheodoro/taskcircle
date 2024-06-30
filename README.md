@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# About the Application
 
-## Getting Started
+Task Circle is a task management application that allows users to create, manage and collaborate on tasks within an group.
 
-First, run the development server:
+## Application Schema and Processes
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+#### Entity-Relationship Diagram (ERD)
+
+The following ERD illustrates the relationships between different entities in the application:
+
+```mermaid
+erDiagram
+  USERS  {
+    id UUID
+    name TEXT
+    email TEXT
+    emailVerified TIMESTAMP
+    organization_id UUID
+    image TEXT
+  }
+
+  ORGANIZATION {
+    id UUID
+    name TEXT
+    slug TEXT
+    description TEXT
+    otp TEXT
+  }
+
+  USER_ORGANIZATIONS {
+    id UUID
+    user_id UUID
+    organization_id UUID
+    role TEXT
+  }
+
+  POSTS {
+    id UUID
+    content TEXT
+    timestamp TIMESTAMP
+    status BOOLEAN
+    organization_id UUID
+    updatedBy UUID
+    user_id UUID
+  }
+
+  ACCOUNTS {
+    userId UUID
+    type TEXT
+    provider TEXT
+    providerAccountId TEXT
+    refresh_token TEXT
+    access_token TEXT
+    expires_at INTEGER
+    token_type TEXT
+    scope TEXT
+    id_token TEXT
+    session_state TEXT
+  }
+
+  ORGANIZATION_INVITES {
+    id UUID
+    user_id UUID
+    organization_id UUID
+    status TEXT
+    expires_at TIMESTAMP
+  }
+
+  USERS ||--o{ POSTS : "creates"
+  USERS ||--o{ USER_ORGANIZATIONS : "belongs to"
+  USERS ||--o{ ORGANIZATION_INVITES : "receives"
+  USERS ||--o{ ACCOUNTS : "has"
+  ORGANIZATION ||--o{ POSTS : "contains"
+  ORGANIZATION ||--o{ USER_ORGANIZATIONS : "has"
+  ORGANIZATION ||--o{ ORGANIZATION_INVITES : "issues"
+  POSTS }o--|| USERS : "authored by"
+  POSTS }o--|| ORGANIZATION : "in"
+  USER_ORGANIZATIONS }o--|| USERS : "for"
+  USER_ORGANIZATIONS }o--|| ORGANIZATION : "in"
+  ORGANIZATION_INVITES }o--|| USERS : "for"
+  ORGANIZATION_INVITES }o--|| ORGANIZATION : "to"
+  ACCOUNTS }o--|| USERS : "belongs to"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### Cron Job Sequence Diagram
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The following sequence diagram describes the cron job responsible for cleaning up expired organization invites:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```mermaid
+sequenceDiagram
+    participant CronJob
+    participant Database
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    CronJob->>Database: Schedule 'organization-invites-daily-cleanup'
+    Note right of CronJob: Runs daily at midnight (GMT)
+    CronJob->>Database: Check and clears for invites older than 24 hours
+    Database-->>CronJob: Confirm deletion
+    Note right of Database: Invites older than 24 hours are deleted
+```

@@ -1,10 +1,7 @@
 import React from 'react';
 
-import { TrashIcon } from 'lucide-react';
-
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card } from '@/components/ui/card';
 
 interface UserCardProps {
   name: string;
