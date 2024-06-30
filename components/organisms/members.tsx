@@ -1,19 +1,19 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
+import { TrashIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 
 import useOrganizationStore from '@/app/hooks/stores/organization';
+import UserCard from '@/components/atoms/user-card';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 import { useGetUsersAndInvites } from '@/hooks/organization';
 import {
   changePendingInvite,
   deleteMembership,
-} from '@/server/actions/organization';
+} from '@/server/actions/membership';
 import { OrganizationInviteStatus } from '@/server/schema';
-
-import UserCard from '../atoms/user-card';
-import { useToast } from '../ui/use-toast';
 
 export function Members() {
   const { organization } = useOrganizationStore();
@@ -23,7 +23,6 @@ export function Members() {
 
   const { execute } = useAction(changePendingInvite, {
     onSuccess(data) {
-      console.log(data);
       if (!data?.error)
         toast({
           title: 'Invite Updated.',
@@ -41,7 +40,6 @@ export function Members() {
     user_id: string,
     status: OrganizationInviteStatus,
   ) => {
-    console.log(data);
     execute({
       org_id: organization.id,
       user_id,
@@ -79,16 +77,14 @@ export function Members() {
                 <div className="mt-4 grid gap-4">
                   {data?.success.users?.length > 0 ? (
                     data?.success.users.map((user) => {
-                      const {
-                        user: { email, image, name, id },
-                      } = user;
+                      const { user: orgUser } = user;
 
                       return (
                         <UserCard
-                          email={email}
-                          name={name}
-                          profileImage={image}
-                          key={id}
+                          email={orgUser.email}
+                          name={orgUser.name}
+                          profileImage={orgUser.image}
+                          key={orgUser.id}
                         >
                           <Button
                             variant="ghost"
@@ -97,7 +93,7 @@ export function Members() {
                             onClick={() =>
                               executeDeleteMembership({
                                 org_id: organization.id,
-                                user_id: id,
+                                user_id: orgUser.id,
                               })
                             }
                           >
@@ -114,7 +110,7 @@ export function Members() {
                           No Users Found
                         </h3>
                         <p className="text-muted-foreground">
-                          You haven't added any users yet.
+                          You haven&apos;t added any users yet.
                         </p>
                       </div>
                     </div>
@@ -128,16 +124,14 @@ export function Members() {
                 <div className="mt-4 grid gap-4">
                   {data?.success.invites?.length > 0 ? (
                     data?.success.invites.map((user) => {
-                      const {
-                        user: { email, image, name, id },
-                      } = user;
+                      const { user: orgUser } = user;
 
                       return (
                         <UserCard
-                          email={email}
-                          name={name}
-                          profileImage={image}
-                          key={id}
+                          email={orgUser.email}
+                          name={orgUser.name}
+                          profileImage={orgUser.image}
+                          key={orgUser.id}
                         >
                           <div className="ml-auto flex gap-2">
                             <Button
@@ -145,7 +139,7 @@ export function Members() {
                               size="sm"
                               onClick={() =>
                                 handleChangeInvite(
-                                  id,
+                                  orgUser.id,
                                   OrganizationInviteStatus.REJECTED,
                                 )
                               }
@@ -156,7 +150,7 @@ export function Members() {
                               size="sm"
                               onClick={() =>
                                 handleChangeInvite(
-                                  id,
+                                  orgUser.id,
                                   OrganizationInviteStatus.ACCEPTED,
                                 )
                               }
@@ -183,25 +177,4 @@ export function Members() {
         </div>
       </div>
     );
-}
-
-function TrashIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 6h18" />
-      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-    </svg>
-  );
 }

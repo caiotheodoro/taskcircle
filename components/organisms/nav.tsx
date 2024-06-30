@@ -2,11 +2,10 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import Logo from '@/components/atoms/logo';
+import OrgPanel from '@/components/atoms/user-panel';
 import { UserButton } from '@/components/molecules/user-button';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/server/auth';
-
-import OrgPanel from './user-panel';
 
 export default async function Nav() {
   const user = await auth();

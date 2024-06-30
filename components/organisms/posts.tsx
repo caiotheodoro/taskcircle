@@ -6,19 +6,18 @@ import Image from 'next/image';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertTriangle, GhostIcon, Trash } from 'lucide-react';
+import { GhostIcon, Trash } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 
 import useOrganizationStore from '@/app/hooks/stores/organization';
+import CententralizedContent from '@/components/molecules/cententralized-content';
 import { CardMotion } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/components/ui/use-toast';
 import { useGetPosts } from '@/hooks/posts';
 import { changePostStatus, deletePost } from '@/server/actions/posts';
-
-import CententralizedContent from '../molecules/cententralized-content';
-import { Skeleton } from '../ui/skeleton';
-import { useToast } from '../ui/use-toast';
 
 export default function Posts() {
   const queryClient = useQueryClient();
@@ -32,7 +31,7 @@ export default function Posts() {
   } = useGetPosts(organization.id);
 
   const { execute: executeChangePostStatus } = useAction(changePostStatus, {
-    onSettled(data) {
+    onSettled() {
       queryClient.invalidateQueries({
         queryKey: ['posts'],
       });
@@ -111,7 +110,7 @@ export default function Posts() {
                 <div className="flex gap-3">
                   <Trash
                     onClick={() => executeDeletePost({ id: post.id })}
-                    className="w-4 text-red-400 cursor-pointer "
+                    className="w-4 text-red-400 cursor-pointer hover:text-red-700 transition-colors"
                   />
                 </div>
               </div>

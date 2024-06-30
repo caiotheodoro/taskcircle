@@ -7,14 +7,17 @@ import { z } from 'zod';
 
 import useOrganizationStore from '@/app/hooks/stores/organization';
 import { Button } from '@/components/ui/button';
+import { Form, FormField, FormItem } from '@/components/ui/form';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { useToast } from '@/components/ui/use-toast';
 import { requestMembershipSchema } from '@/lib/formSchema';
-import { requestMembership } from '@/server/actions/organization';
+import { requestMembership } from '@/server/actions/membership';
 import { MessageService } from '@/server/messages/generic';
 import { OrganizationService } from '@/server/messages/organization';
-
-import { Form, FormField, FormItem } from '../ui/form';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '../ui/input-otp';
-import { useToast } from '../ui/use-toast';
 
 export function OtpCard() {
   const { organization } = useOrganizationStore();

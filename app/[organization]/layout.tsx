@@ -2,9 +2,8 @@
 
 import React, { useEffect } from 'react';
 
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { useGetOrganizationStatus } from '@/hooks/organization';
-
-import useOrganizationStore from '../hooks/stores/organization';
 
 interface LayoutProps {
   children: React.ReactNode;
