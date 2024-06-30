@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { Ratelimit } from '@upstash/ratelimit';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
@@ -16,6 +16,7 @@ import { redis } from '@/server/upstash';
 import { MessageService } from '../messages/generic';
 import { OrganizationService } from '../messages/organization';
 import {
+  OrganizationInviteStatus,
   Role,
   organization,
   organizationInvites,
@@ -30,7 +31,7 @@ const rateLimit = new Ratelimit({
 });
 
 const getOrganizationSchema = z.object({
-  organization_name: z.string(),
+  org_name: z.string(),
 });
 
 enum ORGANIZATION_STATUS {
@@ -46,7 +47,7 @@ export const getOrganization = action(getOrganizationSchema, async (input) => {
   const session = await auth();
 
   const org = await db.query.organization.findFirst({
-    where: eq(organization.name, input.organization_name),
+    where: eq(organization.name, input.org_name),
   });
 
   if (!org)
@@ -72,7 +73,8 @@ export const getOrganization = action(getOrganizationSchema, async (input) => {
     return {
       status: ORGANIZATION_STATUS.CLAIMED,
       organization: {
-        ...org,
+        id: org.id,
+        name: org.name,
         inviteStatus: orgInvite?.status,
       },
     };
@@ -191,6 +193,172 @@ export const requestMembership = action(
         return { error: OrganizationService.ERROR_CREATING_INVITE };
 
       return { success: OrganizationService.CREATED };
+    } catch (error) {
+      return { error: OrganizationService.GENERIC_ERROR };
+    }
+  },
+);
+
+const listUsersAndPendingInvitesSchema = z.object({
+  org_name: z.string(),
+});
+export const listUsersAndPendingInvites = action(
+  listUsersAndPendingInvitesSchema,
+  async ({ org_name }) => {
+    try {
+      const session = await auth();
+
+      const org = await db.query.organization.findFirst({
+        where: eq(organization.name, org_name),
+      });
+
+      console.log(org);
+
+      if (!org) return { error: OrganizationService.NOT_FOUND };
+
+      const currUser = await db.query.userOrganizations.findFirst({
+        where: and(
+          eq(userOrganizations.user_id, session.user.id),
+          eq(userOrganizations.organization_id, org.id),
+        ),
+      });
+
+      console.log(currUser);
+
+      if (currUser.role !== Role.ADMIN)
+        return { error: OrganizationService.NOT_ALLOWED };
+
+      const users = await db.query.userOrganizations.findMany({
+        where: and(
+          eq(userOrganizations.organization_id, org.id),
+          ne(userOrganizations.user_id, session.user.id),
+        ),
+        with: {
+          user: true,
+        },
+      });
+
+      const invites = await db.query.organizationInvites.findMany({
+        where: and(
+          eq(organizationInvites.organization_id, org.id),
+          eq(organizationInvites.status, OrganizationInviteStatus.PENDING),
+        ),
+        with: {
+          user: true,
+        },
+      });
+
+      console.log(users, invites);
+
+      return { success: { users, invites } };
+    } catch (error) {
+      return { error: OrganizationService.GENERIC_ERROR };
+    }
+  },
+);
+
+const changePendingInviteSchema = z.object({
+  org_id: z.string(),
+  user_id: z.string(),
+  status: z.enum([
+    OrganizationInviteStatus.ACCEPTED,
+    OrganizationInviteStatus.REJECTED,
+    OrganizationInviteStatus.PENDING,
+  ]),
+});
+
+export const changePendingInvite = action(
+  changePendingInviteSchema,
+  async ({ org_id, user_id, status }) => {
+    try {
+      const session = await auth();
+
+      const org = await db.query.organization.findFirst({
+        where: eq(organization.id, org_id),
+      });
+
+      if (!org) return { error: OrganizationService.NOT_FOUND };
+
+      const currUser = await db.query.userOrganizations.findFirst({
+        where: and(
+          eq(userOrganizations.user_id, session.user.id),
+          eq(userOrganizations.organization_id, org.id),
+        ),
+      });
+
+      if (currUser.role !== Role.ADMIN)
+        return { error: OrganizationService.NOT_ALLOWED };
+
+      const invite = await db.query.organizationInvites.findFirst({
+        where: and(
+          eq(organizationInvites.organization_id, org.id),
+          eq(organizationInvites.user_id, user_id),
+        ),
+      });
+
+      if (!invite) return { error: OrganizationService.NOT_FOUND };
+
+      if (status === OrganizationInviteStatus.ACCEPTED) {
+        await db.insert(userOrganizations).values({
+          organization_id: org.id,
+          user_id: user_id,
+          role: Role.MEMBER,
+        });
+      }
+
+      await db
+        .delete(organizationInvites)
+        .where(
+          and(
+            eq(organizationInvites.organization_id, org.id),
+            eq(organizationInvites.user_id, user_id),
+          ),
+        );
+
+      return { success: OrganizationService.UPDATED };
+    } catch (error) {
+      return { error: OrganizationService.GENERIC_ERROR };
+    }
+  },
+);
+
+const deleteMembershipSchema = z.object({
+  org_id: z.string(),
+  user_id: z.string(),
+});
+
+export const deleteMembership = action(
+  deleteMembershipSchema,
+  async ({ org_id, user_id }) => {
+    try {
+      const session = await auth();
+
+      const org = await db.query.organization.findFirst({
+        where: eq(organization.id, org_id),
+      });
+
+      if (!org) return { error: OrganizationService.NOT_FOUND };
+
+      const currUser = await db.query.userOrganizations.findFirst({
+        where: and(
+          eq(userOrganizations.user_id, session.user.id),
+          eq(userOrganizations.organization_id, org.id),
+        ),
+      });
+
+      if (currUser.role !== Role.ADMIN)
+        return { error: OrganizationService.NOT_ALLOWED };
+
+      await db
+        .delete(userOrganizations)
+        .where(
+          and(
+            eq(userOrganizations.organization_id, org.id),
+            eq(userOrganizations.user_id, user_id),
+          ),
+        );
+
+      return { success: OrganizationService.UPDATED };
     } catch (error) {
       return { error: OrganizationService.GENERIC_ERROR };
     }

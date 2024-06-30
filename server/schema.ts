@@ -159,7 +159,7 @@ export const warningsRelations = relations(warnings, ({ one }) => ({
   }),
 }));
 
-enum status {
+export enum OrganizationInviteStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
@@ -180,7 +180,10 @@ export const organizationInvites = pgTable('organization_invites', {
     .references(() => organization.id, {
       onDelete: 'cascade',
     }),
-  status: text('status').$type<status>().notNull().default(status.PENDING),
+  status: text('status')
+    .$type<OrganizationInviteStatus>()
+    .notNull()
+    .default(OrganizationInviteStatus.PENDING),
 });
 
 //organizationInvites can have ONLY an combination of user_id and organization_id
