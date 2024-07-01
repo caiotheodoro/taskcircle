@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import Image from 'next/image';
 
@@ -19,6 +19,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetPosts } from '@/hooks/posts';
 import { changePostStatus, deletePost } from '@/server/actions/posts';
+import { createClient } from '@/server/real-time/client';
+import { listenToPosts } from '@/server/real-time/watchers';
 
 export default function Posts() {
   const queryClient = useQueryClient();
@@ -41,6 +43,19 @@ export default function Posts() {
       },
     },
   );
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = listenToPosts(supabase, organization.id, (payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+      });
+    });
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [organization.id, queryClient]);
+
   const { execute: executeDeletePost } = useAction(deletePost, {
     onSuccess() {
       toast({

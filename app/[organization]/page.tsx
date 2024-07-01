@@ -25,7 +25,6 @@ export default async function Organization({
     staleTime: 1000 * 60 * 5,
   });
 
-  //verify if the organization name is valid (less than 40 characters, only letters and numbers and -)
   if (!/^[a-zA-Z0-9-]{1,40}$/.test(organization)) {
     return (
       <CententralizedContent>
@@ -34,7 +33,7 @@ export default async function Organization({
         </h1>
         <p className="text-center">
           The organization name must be between 1 and 40 characters long and can
-          only contain letters, numbers and hyphens (-)
+          only contain letters, numbers and hyphens (-).
         </p>
       </CententralizedContent>
     );

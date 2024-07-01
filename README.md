@@ -97,3 +97,35 @@ sequenceDiagram
     Database-->>CronJob: Confirm deletion
     Note right of Database: Invites older than 24 hours are deleted
 ```
+
+<!-- mmdc -i README.mmd -o output.svg -->
+
+### Broadcast Process Sequence Diagram
+
+The following sequence diagram describes the process of broadcasting a new post to all users in an organization, and also the process of broadcasting invite status to users:
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant Application
+  participant Database
+  participant NotificationService
+
+  Note over User, Application: Post Broadcast Process
+
+  User->>Application: Create new post
+  Application->>Database: Save post
+  Database-->>Application: Post saved
+  Application->>NotificationService: Broadcast new post
+  NotificationService-->>Application: Broadcast successful
+  Application-->>User: Post created and broadcasted
+
+  Note over User, Application: User Invite Broadcast Process
+
+  Application->>Database: Save user invite
+  Database-->>Application: User invite saved
+  Application->>NotificationService: Broadcast user invite
+  NotificationService-->>Application: Broadcast successful
+  Application-->>User: User invite sent
+
+```
