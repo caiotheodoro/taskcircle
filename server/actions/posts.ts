@@ -14,7 +14,6 @@ import { PostService } from '@/server/messages/posts';
 import { organization, posts } from '@/server/schema';
 
 export const action = createSafeActionClient();
-
 export const createPost = action(formSchema, async ({ content, org_id }) => {
   const session = await auth();
   const org = await fetchOrganizationById(org_id);

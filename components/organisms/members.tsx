@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { useQueryClient } from '@tanstack/react-query';
 import { TrashIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -13,6 +15,8 @@ import {
   changePendingInvite,
   deleteMembership,
 } from '@/server/actions/membership';
+import { createClient } from '@/server/real-time/client';
+import { listenToInvites } from '@/server/real-time/watchers';
 import { OrganizationInviteStatus } from '@/server/schema';
 
 export function Members() {
@@ -61,6 +65,18 @@ export function Members() {
       });
     },
   });
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = listenToInvites(supabase, organization.id, (payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ['users-and-invites'],
+      });
+    });
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [organization.id, queryClient]);
 
   if (orgError) return orgError.message;
 
