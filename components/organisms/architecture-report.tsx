@@ -56,8 +56,8 @@ export default function ArchitectureReport() {
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   The data model is made up of 6 tables, which are users,
-                  accounts, organizations, user organizations, organization
-                  invites, posts
+                  accounts, organizations, user-organizations, organization-
+                  invites and posts.
                 </p>
               </div>
             </div>
