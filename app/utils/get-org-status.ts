@@ -9,6 +9,12 @@ export enum ORGANIZATION_STATUS {
   MEMBER = 'member',
 }
 
+export enum HookActionStatus {
+  IDLE = 'idle',
+  EXECUTING = 'executing',
+  HAS_SUCCEEDED = 'hasSucceeded',
+  HAS_ERRORED = 'hasErrored',
+}
 interface Organization {
   role: string;
   organization: {
