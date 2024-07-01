@@ -11,6 +11,7 @@ import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 
 import useOrganizationStore from '@/app/hooks/stores/organization';
+import { HookActionStatus } from '@/app/utils/get-org-status';
 import CententralizedContent from '@/components/molecules/cententralized-content';
 import { CardMotion } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -30,13 +31,16 @@ export default function Posts() {
     isLoading,
   } = useGetPosts(organization.id);
 
-  const { execute: executeChangePostStatus } = useAction(changePostStatus, {
-    onSettled() {
-      queryClient.invalidateQueries({
-        queryKey: ['posts'],
-      });
+  const { execute: executeChangePostStatus, status } = useAction(
+    changePostStatus,
+    {
+      onSettled() {
+        queryClient.invalidateQueries({
+          queryKey: ['posts'],
+        });
+      },
     },
-  });
+  );
   const { execute: executeDeletePost } = useAction(deletePost, {
     onSuccess() {
       toast({
@@ -118,6 +122,7 @@ export default function Posts() {
                 <Checkbox
                   onClick={() => handleChangeStatus(post.id, !post.status)}
                   defaultChecked={post.status}
+                  disabled={status === HookActionStatus.EXECUTING}
                 />
                 <p
                   className={`text-primary text-sm ${post.status && 'line-through'}`}

@@ -70,10 +70,10 @@ export default function PostForm() {
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
                 <FormLabel>Create task</FormLabel>
+                <FormMessage />
                 <FormControl>
                   <Input placeholder="Wash dishes" {...field} />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
