@@ -92,6 +92,7 @@ export function OtpCard() {
               render={({ field }) => (
                 <FormItem>
                   <InputOTP
+                    inputMode="text"
                     maxLength={5}
                     pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
                     className="text-3xl"
