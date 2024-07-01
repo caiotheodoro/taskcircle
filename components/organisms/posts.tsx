@@ -136,7 +136,7 @@ export default function Posts() {
               <div className="flex gap-2 items-center">
                 <Checkbox
                   onClick={() => handleChangeStatus(post.id, !post.status)}
-                  defaultChecked={post.status}
+                  checked={post.status}
                   disabled={status === HookActionStatus.EXECUTING}
                 />
                 <p
