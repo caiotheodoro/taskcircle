@@ -25,6 +25,16 @@ const deleteSchema = z.object({
 
 export const deleteOrg = action(deleteSchema, async ({ id }) => {
   try {
+    const session = await auth();
+
+    const org = await fetchOrganizationById(id);
+
+    if (!org) return { error: OrganizationService.NOT_FOUND };
+
+    const isAdmin = await checkAdminStatus(session.user.id, org.id);
+
+    if (!isAdmin) return { error: OrganizationService.NOT_ALLOWED };
+
     await db.delete(organization).where(eq(organization.id, id));
     revalidatePath('/');
     return { success: OrganizationService.DELETED };

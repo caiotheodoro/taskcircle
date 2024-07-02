@@ -32,10 +32,14 @@ export default function OrganizationList() {
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6  pt-5">
           <AnimatePresence presenceAffectsLayout>
             {organizations?.success?.map((org) => {
-              const { organization } = org;
+              const { organization, role } = org;
 
               return (
-                <OrganizationCard key={organization.id} {...organization} />
+                <OrganizationCard
+                  key={organization.id}
+                  {...organization}
+                  role={role}
+                />
               );
             })}
           </AnimatePresence>
