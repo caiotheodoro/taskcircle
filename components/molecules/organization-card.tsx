@@ -10,6 +10,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { CardContent } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { deleteOrg } from '@/server/actions/organization';
+import { Role } from '@/server/schema';
 
 import { DeleteWithConfirmation } from './delete-with-confirmation';
 
@@ -19,6 +20,8 @@ interface OrganizationCardProps {
   slug: string;
 
   id: string;
+
+  role: string;
 }
 
 export function OrganizationCard({
@@ -26,6 +29,7 @@ export function OrganizationCard({
   name,
   slug,
   id,
+  role,
 }: Readonly<OrganizationCardProps>) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -68,7 +72,9 @@ export function OrganizationCard({
         </div>
         <p className="text-muted-foreground">{description}</p>
         <div className="text-sm text-muted-foreground">/{name}</div>
-        <DeleteWithConfirmation onDelete={() => executeDeleteOrg({ id })} />
+        {role === Role.ADMIN && (
+          <DeleteWithConfirmation onDelete={() => executeDeleteOrg({ id })} />
+        )}
       </CardContent>
     </motion.div>
   );
