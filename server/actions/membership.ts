@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { Ratelimit } from '@upstash/ratelimit';
@@ -78,6 +79,7 @@ export const requestMembership = action(
       if (!orgInvite)
         return { error: OrganizationService.ERROR_CREATING_INVITE };
 
+      revalidatePath('/');
       return { success: OrganizationService.CREATED };
     } catch (error) {
       return { error: OrganizationService.GENERIC_ERROR };
