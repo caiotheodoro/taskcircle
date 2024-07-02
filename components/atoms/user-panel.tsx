@@ -9,7 +9,9 @@ export default function OrgPanel() {
   if (organization?.slug)
     return (
       <>
-        <span className="mr-4 text-sm">{organization?.slug}</span>
+        <span className="mr-4 text-sm truncate w-44" title={organization?.slug}>
+          {organization?.slug}
+        </span>
         <span className="mr-5 text-sm">•</span>
       </>
     );

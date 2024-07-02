@@ -14,7 +14,6 @@ import WelcomePage from './welcome-page';
 export default function OrganizationList() {
   const { data: organizations, error, isLoading } = useGetOrganizations();
 
-  console.log(organizations, error, isLoading);
   if (error) return error.message;
 
   if (isLoading)

@@ -9,7 +9,12 @@ export const formSchema = z.object({
 
 export const orgSchema = z.object({
   name: z.string(),
-  description: z.string().optional(),
+  description: z
+    .string()
+    .max(100, {
+      message: 'Description must be less than 200 characters.',
+    })
+    .optional(),
   slug: z.string().max(40, {
     message: 'Slug must be less than 40 characters.',
   }),

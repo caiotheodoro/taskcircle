@@ -7,7 +7,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-5 md:px-56 border-t fixed bottom-0 left-0 bg-background ">
+    <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-5 md:px-56 border-t fixed bottom-0 left-0 bg-background z-20">
       <p className="text-xs text-muted-foreground">
         &copy; 2024 Task circle. All rights reserved.
       </p>

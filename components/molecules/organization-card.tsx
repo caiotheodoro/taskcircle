@@ -64,11 +64,11 @@ export function OrganizationCard({
         <span className="sr-only">Access group</span>
       </Link>
       <CardContent className="p-6 grid gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 max-w-96">
           <div className="bg-primary rounded-md p-3 flex items-center justify-center">
             <UsersIcon className="w-6 h-6 text-primary-foreground" />
           </div>
-          <h3 className="text-xl font-semibold">{slug}</h3>
+          <h3 className="text-xl font-semibold truncate">{slug}</h3>
         </div>
         <p className="text-muted-foreground">{description}</p>
         <div className="text-sm text-muted-foreground">/{name}</div>
