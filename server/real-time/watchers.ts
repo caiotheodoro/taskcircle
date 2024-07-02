@@ -13,7 +13,7 @@ export const listenToPosts = (
     .on(
       'postgres_changes',
       {
-        event: 'INSERT',
+        event: '*',
         schema: 'public',
         table: 'posts',
         filter: `organization_id=eq.${org_id}`,
