@@ -33,7 +33,18 @@ export const deleteOrg = action(deleteSchema, async ({ id }) => {
 
     const isAdmin = await checkAdminStatus(session.user.id, org.id);
 
-    if (!isAdmin) return { error: OrganizationService.NOT_ALLOWED };
+    if (!isAdmin) {
+      await db
+        .delete(userOrganizations)
+        .where(
+          and(
+            eq(userOrganizations.organization_id, org.id),
+            eq(userOrganizations.user_id, session.user.id),
+          ),
+        );
+
+      return { success: OrganizationService.DELETED };
+    }
 
     await db.delete(organization).where(eq(organization.id, id));
     revalidatePath('/');
@@ -180,7 +191,7 @@ export const createOrganization = action(
 
     if (!userOrg) return { error: OrganizationService.ERROR_CREATING };
 
-    revalidatePath('/' + name);
+    revalidatePath('/');
 
     if (userOrg[0]) return { success: OrganizationService.CREATED };
   },
