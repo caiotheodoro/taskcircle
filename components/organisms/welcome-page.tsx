@@ -1,23 +1,28 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/Y5q07mdAvEB
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import { useState } from 'react';
-
 import { useRouter } from 'next/navigation';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { newOrgSchema } from '@/lib/formSchema';
+
+import { Form, FormField, FormItem, FormMessage } from '../ui/form';
 
 export default function WelcomePage() {
   const { push: redirect } = useRouter();
-  const [groupName, setGroupName] = useState('');
+  const form = useForm<z.infer<typeof newOrgSchema>>({
+    resolver: zodResolver(newOrgSchema),
+    defaultValues: {
+      name: '',
+    },
+  });
 
-  const handleClick = () => {
-    redirect(`/${groupName}`);
-  };
+  function onSubmit(values: z.infer<typeof newOrgSchema>) {
+    redirect(`/${values.name}`);
+  }
 
   return (
     <div className="flex flex-col">
@@ -35,20 +40,29 @@ export default function WelcomePage() {
                     Create groups, assign tasks, and track progress together!
                   </p>
                 </div>
-                <div className="flex gap-2 max-w-96">
-                  <Input
-                    type="text"
-                    placeholder="Group name"
-                    onChange={(e) => setGroupName(e.target.value)}
-                  />
-                  <Button
-                    variant="default"
-                    className="w-40"
-                    onClick={handleClick}
-                  >
-                    Create/Enter a Group
-                  </Button>
-                </div>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <div className="flex gap-2 max-w-96">
+                      <FormField
+                        name="name"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <Input
+                              type="text"
+                              placeholder="Group name"
+                              {...field}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button variant="default" className="w-40" type="submit">
+                        Create/Enter a Group
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
               </div>
               <div className="flex flex-col gap-6 items-center mt-10">
                 <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow min-w-80">
