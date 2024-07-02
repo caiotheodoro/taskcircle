@@ -190,9 +190,7 @@ export const createOrganization = action(
     });
 
     if (!userOrg) return { error: OrganizationService.ERROR_CREATING };
-
     revalidatePath('/');
-
     if (userOrg[0]) return { success: OrganizationService.CREATED };
   },
 );
