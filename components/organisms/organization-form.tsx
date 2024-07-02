@@ -71,6 +71,9 @@ export function OrganizationForm() {
       queryClient.invalidateQueries({
         queryKey: ['organization-status'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['organizations'],
+      });
     },
   });
 
