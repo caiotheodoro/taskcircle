@@ -21,7 +21,7 @@ interface OrganizationCardProps {
 
   id: string;
 
-  role: string;
+  role: Role;
 }
 
 export function OrganizationCard({
@@ -72,9 +72,10 @@ export function OrganizationCard({
         </div>
         <p className="text-muted-foreground">{description}</p>
         <div className="text-sm text-muted-foreground">/{name}</div>
-        {role === Role.ADMIN && (
-          <DeleteWithConfirmation onDelete={() => executeDeleteOrg({ id })} />
-        )}
+        <DeleteWithConfirmation
+          onDelete={() => executeDeleteOrg({ id })}
+          role={role}
+        />
       </CardContent>
     </motion.div>
   );

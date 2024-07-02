@@ -59,6 +59,8 @@ export const fetchPosts = async (org_id) => {
     orderBy: (posts, { desc }) => [desc(posts.timestamp)],
   });
 
+  revalidatePath('/');
+
   if (!orgPosts) return { error: PostService.NOT_FOUND };
   return { success: orgPosts };
 };

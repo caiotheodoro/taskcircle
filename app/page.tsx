@@ -1,12 +1,8 @@
-import Link from 'next/link';
-
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query';
-import { Globe } from 'lucide-react';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 import Footer from '@/components/organisms/footer';
 import OrganizationList from '@/components/organisms/organization-list';
@@ -17,7 +13,7 @@ export default async function Home() {
 
   await queryClient.fetchQuery({
     queryKey: ['organizations'],
-    queryFn: fetchOrganizations,
+    queryFn: () => fetchOrganizations(),
     staleTime: 1000 * 60 * 5,
   });
 

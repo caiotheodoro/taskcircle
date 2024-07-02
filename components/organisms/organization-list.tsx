@@ -8,11 +8,13 @@ import { OrganizationCard } from '@/components/molecules/organization-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetOrganizations } from '@/hooks/organization';
 
+import { OrgDialog } from '../molecules/organization-dialog';
 import WelcomePage from './welcome-page';
 
 export default function OrganizationList() {
   const { data: organizations, error, isLoading } = useGetOrganizations();
 
+  console.log(organizations, error, isLoading);
   if (error) return error.message;
 
   if (isLoading)
@@ -28,7 +30,10 @@ export default function OrganizationList() {
   if (organizations?.success)
     return (
       <>
-        <h1 className="text-3xl font-bold">Your groups</h1>
+        <div className="flex w-full justify-between">
+          <h1 className="text-3xl font-bold">Your groups</h1>
+          <OrgDialog />
+        </div>
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6  pt-5">
           <AnimatePresence presenceAffectsLayout>
             {organizations?.success?.map((org) => {

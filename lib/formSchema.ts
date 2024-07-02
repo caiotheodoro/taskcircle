@@ -19,3 +19,10 @@ export const requestMembershipSchema = z.object({
   org_id: z.string(),
   otp: z.string(),
 });
+
+export const newOrgSchema = z.object({
+  // pattern="[a-zA-Z0-9-]{1,40}"
+  name: z.string().regex(/^[a-zA-Z0-9-]{1,40}$/, {
+    message: 'Name must contain only letters, numbers, and dashes.',
+  }),
+});
