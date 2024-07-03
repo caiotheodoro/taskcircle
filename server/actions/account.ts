@@ -10,6 +10,7 @@ import { db } from '@/server/';
 import {
   accounts,
   organization,
+  settings,
   userOrganizations,
   users,
 } from '@/server/schema';
@@ -31,6 +32,11 @@ export const deleteAccount = async () => {
     let promises: Promise<any>[] = [];
 
     userOrgs.forEach((userOrg) => {
+      promises.push(
+        db
+          .delete(settings)
+          .where(eq(settings.organization_id, userOrg.organization_id)),
+      );
       promises.push(
         db
           .delete(organization)
