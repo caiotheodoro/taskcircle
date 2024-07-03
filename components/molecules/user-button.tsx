@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { LogOut, Settings, Settings2, Users } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
@@ -17,8 +17,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Role } from '@/server/schema';
 
-import { ClipboardCrop } from './clipboard-crop';
-
 export const UserButton = ({ user }: Session) => {
   const { organization } = useOrganizationStore();
   const router = useRouter();
@@ -26,7 +24,7 @@ export const UserButton = ({ user }: Session) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="focus-visible:invisible">
         <Avatar>
           <AvatarImage src={user?.image || ''} />
           <AvatarFallback>
@@ -42,11 +40,6 @@ export const UserButton = ({ user }: Session) => {
           <span className="text-xs text-secondary-foreground">
             {user?.email}
           </span>
-          {organization?.otp && (
-            <div className="flex items-center justify-center gap-2 w-full pt-3">
-              <ClipboardCrop otp={organization.otp} />
-            </div>
-          )}
         </div>
         <DropdownMenuItem
           className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
@@ -55,24 +48,7 @@ export const UserButton = ({ user }: Session) => {
           <Settings className="mr-4 px-1" />
           Account Settings
         </DropdownMenuItem>
-        {organization?.otp && isAdmin && (
-          <>
-            <DropdownMenuItem
-              className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
-              onClick={() => router.push(`/${organization?.name}/members`)}
-            >
-              <Users className="mr-4 px-1" />
-              Group Members
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
-              onClick={() => router.push(`/${organization?.name}/settings`)}
-            >
-              <Settings2 className="mr-4 px-1" />
-              Group Settings
-            </DropdownMenuItem>
-          </>
-        )}
+
         <DropdownMenuItem
           className="py-2 px-2 flex items-center font-medium hover:text-destructive cursor-pointer"
           onClick={() => signOut()}

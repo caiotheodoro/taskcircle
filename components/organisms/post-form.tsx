@@ -70,16 +70,18 @@ export default function PostForm() {
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
                 <FormLabel>Create task</FormLabel>
+                <div className="flex gap-5">
+                  <FormControl>
+                    <Input placeholder="Wash dishes" {...field} />
+                  </FormControl>
+                  <Button disabled={status === 'executing'} type="submit">
+                    Submit
+                  </Button>
+                </div>
                 <FormMessage />
-                <FormControl>
-                  <Input placeholder="Wash dishes" {...field} />
-                </FormControl>
               </FormItem>
             )}
           />
-          <Button disabled={status === 'executing'} type="submit">
-            Submit
-          </Button>
         </form>
       </Form>
     </main>

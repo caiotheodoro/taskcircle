@@ -21,7 +21,7 @@ export default async function Nav() {
               <Link href={'/auth/login'}>Sign In</Link>
             </Button>
           ) : (
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
               <OrgPanel />
               <UserButton expires={user.expires} user={user.user} />
             </div>
