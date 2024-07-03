@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { LogOut, Users } from 'lucide-react';
+import { LogOut, Settings, Users } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
@@ -50,13 +50,22 @@ export const UserButton = ({ user }: Session) => {
         </div>
 
         {organization?.otp && isAdmin && (
-          <DropdownMenuItem
-            className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
-            onClick={() => router.push(`/${organization?.name}/members`)}
-          >
-            <Users className="mr-4 px-1" />
-            Group Members
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem
+              className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
+              onClick={() => router.push(`/${organization?.name}/members`)}
+            >
+              <Users className="mr-4 px-1" />
+              Group Members
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
+              onClick={() => router.push(`/${organization?.name}/settings`)}
+            >
+              <Settings className="mr-4 px-1" />
+              Settings
+            </DropdownMenuItem>
+          </>
         )}
         <DropdownMenuItem
           className="py-2 px-2 flex items-center font-medium hover:text-destructive cursor-pointer"

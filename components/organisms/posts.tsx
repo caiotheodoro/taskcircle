@@ -126,14 +126,14 @@ export default function Posts() {
                   />
                   <h2 className="text-sm font-normal">{post.author.name}</h2>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-center">
                   <Trash
                     onClick={() => executeDeletePost({ id: post.id })}
                     className="w-4 text-red-400 cursor-pointer hover:text-red-700 transition-colors"
                   />
                 </div>
               </div>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center ">
                 <Checkbox
                   onClick={() => handleChangeStatus(post.id, !post.status)}
                   checked={post.status}
@@ -144,6 +144,30 @@ export default function Posts() {
                 >
                   {post.content}
                 </p>
+              </div>
+              <div className="text-sm text-muted-foreground w-full flex justify-end -mt-3">
+                <span className="text-muted-foreground text-xs flex gap-3">
+                  {post.updatedBy && post.status && (
+                    <>
+                      <p className="text-muted-foreground text-xs">
+                        Checked by <b>{post.updatedBy?.name}</b>
+                      </p>
+                      •
+                    </>
+                  )}
+
+                  <p className="text-muted-foreground text-xs">
+                    {new Date(post.timestamp).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                    ,{' '}
+                    {new Date(post.timestamp).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </p>
+                </span>
               </div>
             </motion.div>
           ))}
