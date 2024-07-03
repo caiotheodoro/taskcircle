@@ -66,6 +66,14 @@ erDiagram
     expires_at TIMESTAMP
   }
 
+  SETTINGS {
+    id UUID
+    key TEXT
+    value TEXT
+    enabled BOOLEAN
+    organization_id UUID
+  }
+
   USERS ||--o{ POSTS : "creates"
   USERS ||--o{ USER_ORGANIZATIONS : "belongs to"
   USERS ||--o{ ORGANIZATION_INVITES : "receives"
@@ -80,6 +88,8 @@ erDiagram
   ORGANIZATION_INVITES }o--|| USERS : "for"
   ORGANIZATION_INVITES }o--|| ORGANIZATION : "to"
   ACCOUNTS }o--|| USERS : "belongs to"
+  SETTINGS }o--|| ORGANIZATION : "for"
+
 ```
 
 #### Cron Job Sequence Diagram
