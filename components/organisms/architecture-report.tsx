@@ -35,7 +35,7 @@ export default function ArchitectureReport() {
                   <Badge
                     key={badge}
                     variant="outline"
-                    className="bg-primary text-primary-foreground"
+                    className="bg-primary text-primary-foreground notranslate"
                   >
                     {badge}
                   </Badge>
@@ -77,10 +77,10 @@ export default function ArchitectureReport() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
-                  Sequence Diagram
+                  Cron Job Sequence Diagram
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Cron Job Workflow
+                  Organization-Invites Workflow
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   The cron job workflow is responsible for cleaning organization
@@ -91,6 +91,33 @@ export default function ArchitectureReport() {
             <div className="mx-auto  max-w-3xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
               <Image
                 src="/sd.svg"
+                width={400}
+                height={350}
+                alt="Sequence Diagram"
+                className="mx-auto rounded-xl object-cover object-center sm:w-full"
+              />
+            </div>
+          </div>
+        </section>
+        <section className="w-full py-12 md:py-12 lg:py-24">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
+                  Cron Job Sequence Diagram
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Checked Posts Cleaning Workflow
+                </h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  The cron job workflow is responsible for cleaning checked
+                  posts that already expired after 24 hours
+                </p>
+              </div>
+            </div>
+            <div className="mx-auto  max-w-3xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+              <Image
+                src="/cron-del-post.svg"
                 width={400}
                 height={350}
                 alt="Sequence Diagram"
