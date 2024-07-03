@@ -11,7 +11,9 @@ import { db } from '@/server/';
 import { auth } from '@/server/auth';
 import { OrganizationService } from '@/server/messages/organization';
 import { PostService } from '@/server/messages/posts';
-import { organization, posts } from '@/server/schema';
+import { posts } from '@/server/schema';
+
+import { fetchOrganizationById } from './shared';
 
 export const action = createSafeActionClient();
 export const createPost = action(formSchema, async ({ content, org_id }) => {
@@ -86,10 +88,3 @@ export const changePostStatus = action(
     return { success: PostService.UPDATED };
   },
 );
-
-// Helper function to fetch organization by ID
-const fetchOrganizationById = async (orgId) => {
-  return await db.query.organization.findFirst({
-    where: eq(organization.id, orgId),
-  });
-};

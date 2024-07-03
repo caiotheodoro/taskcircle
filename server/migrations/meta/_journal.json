@@ -225,6 +225,90 @@
       "when": 1719985090581,
       "tag": "0031_neat_vindicator",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1720018236046,
+      "tag": "0032_careless_union_jack",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1720019413945,
+      "tag": "0033_burly_zodiak",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1720039151923,
+      "tag": "0034_bouncy_rachel_grey",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1720039936325,
+      "tag": "0035_bouncy_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1720039999531,
+      "tag": "0036_windy_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "5",
+      "when": 1720040045510,
+      "tag": "0037_yellow_darwin",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "5",
+      "when": 1720040081326,
+      "tag": "0038_outgoing_spitfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "5",
+      "when": 1720040152103,
+      "tag": "0039_cultured_wild_pack",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1720040232741,
+      "tag": "0040_easy_doctor_octopus",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "5",
+      "when": 1720040506147,
+      "tag": "0041_milky_photon",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "5",
+      "when": 1720040567649,
+      "tag": "0042_illegal_garia",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "5",
+      "when": 1720040593260,
+      "tag": "0043_fantastic_morbius",
+      "breakpoints": true
     }
   ]
 }

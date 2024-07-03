@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { LogOut, Settings, Users } from 'lucide-react';
+import { LogOut, Settings, Settings2, Users } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
@@ -48,7 +48,13 @@ export const UserButton = ({ user }: Session) => {
             </div>
           )}
         </div>
-
+        <DropdownMenuItem
+          className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
+          onClick={() => router.push(`/settings`)}
+        >
+          <Settings className="mr-4 px-1" />
+          Account Settings
+        </DropdownMenuItem>
         {organization?.otp && isAdmin && (
           <>
             <DropdownMenuItem
@@ -62,8 +68,8 @@ export const UserButton = ({ user }: Session) => {
               className="py-2 px-2 flex items-center font-medium cursor-pointer hover:text-blue-500"
               onClick={() => router.push(`/${organization?.name}/settings`)}
             >
-              <Settings className="mr-4 px-1" />
-              Settings
+              <Settings2 className="mr-4 px-1" />
+              Group Settings
             </DropdownMenuItem>
           </>
         )}

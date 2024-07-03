@@ -13,7 +13,6 @@ export default function OrgPanel() {
           className="mr-4 text-sm truncate max-w-44"
           title={organization?.slug}
         >
-
           {organization?.slug}
         </span>
         <span className="mr-5 text-sm">•</span>

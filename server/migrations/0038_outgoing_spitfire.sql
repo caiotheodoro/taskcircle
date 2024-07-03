@@ -1,0 +1,1 @@
+ALTER TABLE "user_organizations" ADD PRIMARY KEY ("id");

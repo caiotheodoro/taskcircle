@@ -6,4 +6,6 @@ export enum MessageService {
   CREATED = 'CREATED',
   DELETED = 'DELETED',
   GENERIC_ERROR = 'GENERIC_ERROR',
+
+  UNAUTHORIZED = 'UNAUTHORIZED',
 }

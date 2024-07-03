@@ -7,7 +7,9 @@ import { z } from 'zod';
 import { db } from '@/server/';
 import { SettingsKey, organization, settings } from '@/server/schema';
 
+import { auth } from '../auth';
 import { MessageService } from '../messages/generic';
+import { checkAdminStatus } from './shared';
 
 export const action = createSafeActionClient();
 
@@ -20,7 +22,11 @@ export const changeDeletejobSettings = action(
   deleteCheckJobSchema,
   async ({ enabled, org_id }) => {
     try {
-      console.log('changing status 2', enabled, org_id);
+      const session = await auth();
+
+      const isAdmin = await checkAdminStatus(session.user.id, org_id);
+
+      if (!isAdmin) return { error: MessageService.UNAUTHORIZED };
 
       await db
         .insert(settings)
@@ -36,7 +42,6 @@ export const changeDeletejobSettings = action(
 
       return { success: MessageService.UPDATED };
     } catch (error) {
-      console.log('error', error);
       return { error: MessageService.GENERIC_ERROR };
     }
   },
@@ -50,6 +55,12 @@ export const listSettings = action(
     const org = await fetchOrganizationByName(org_name);
 
     if (!org) return { error: MessageService.NOT_FOUND };
+
+    const session = await auth();
+
+    const isAdmin = await checkAdminStatus(session.user.id, org.id);
+
+    if (!isAdmin) return { error: MessageService.UNAUTHORIZED };
 
     const settingsList = await db.query.settings.findMany({
       where: eq(settings.organization_id, org.id),

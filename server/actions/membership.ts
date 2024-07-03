@@ -21,36 +21,14 @@ import {
 } from '@/server/schema';
 import { redis } from '@/server/upstash';
 
+import { checkAdminStatus, fetchOrganizationById } from './shared';
+
 export const action = createSafeActionClient();
 
 const rateLimit = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(6, '120s'),
 });
-
-const checkAdminStatus = async (userId: string, orgId: string) => {
-  const userOrg = await db.query.userOrganizations.findFirst({
-    where: and(
-      eq(userOrganizations.user_id, userId),
-      eq(userOrganizations.organization_id, orgId),
-    ),
-  });
-
-  return userOrg && userOrg.role === Role.ADMIN;
-};
-
-const fetchOrganizationById = async (orgId: string) => {
-  return await db.query.organization.findFirst({
-    where: eq(organization.id, orgId),
-  });
-};
-
-const createOrganizationInvite = async (orgId: string, userId: string) => {
-  return await db.insert(organizationInvites).values({
-    organization_id: orgId,
-    user_id: userId,
-  });
-};
 
 export const requestMembership = action(
   z.object({
@@ -211,3 +189,13 @@ export const deleteMembership = action(
     }
   },
 );
+
+export const createOrganizationInvite = async (
+  orgId: string,
+  userId: string,
+) => {
+  return await db.insert(organizationInvites).values({
+    organization_id: orgId,
+    user_id: userId,
+  });
+};

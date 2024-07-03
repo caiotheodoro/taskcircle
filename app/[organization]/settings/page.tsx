@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 
 import CententralizedContent from '@/components/molecules/cententralized-content';
-import { SettingsPage } from '@/components/organisms/settings';
+import { OrgSettingsPage } from '@/components/organisms/org-settings';
 import { listSettings } from '@/server/actions/settings';
 
 interface SettingsProps {
@@ -15,7 +15,7 @@ interface SettingsProps {
     organization: string;
   };
 }
-export default async function Settings({
+export default async function OrgSettings({
   params: { organization },
 }: Readonly<SettingsProps>) {
   const queryClient = new QueryClient();
@@ -30,7 +30,7 @@ export default async function Settings({
     <main>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <CententralizedContent>
-          <SettingsPage />
+          <OrgSettingsPage />
         </CententralizedContent>
       </HydrationBoundary>
     </main>
