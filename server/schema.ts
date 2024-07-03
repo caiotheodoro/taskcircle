@@ -83,6 +83,7 @@ export enum Role {
 export const userOrganizations = pgTable('user_organizations', {
   id: text('id')
     .notNull()
+    .primaryKey()
     .$defaultFn(() => createId()),
   user_id: text('user_id')
     .notNull()
