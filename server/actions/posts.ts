@@ -54,6 +54,7 @@ export const fetchPosts = async (org_id) => {
   const orgPosts = await db.query.posts.findMany({
     with: {
       author: true,
+      updatedBy: true,
     },
     where: eq(posts.organization_id, org.id),
     orderBy: (posts, { desc }) => [desc(posts.timestamp)],
@@ -76,7 +77,7 @@ export const changePostStatus = action(
   async ({ status, post_id, user_id }) => {
     const updatedPost = await db
       .update(posts)
-      .set({ status, updatedBy: user_id })
+      .set({ status, updatedBy: user_id, updatedAt: new Date() })
       .where(eq(posts.id, post_id));
 
     revalidatePath('/');
