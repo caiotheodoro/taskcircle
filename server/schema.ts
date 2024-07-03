@@ -19,6 +19,7 @@ export const posts = pgTable('posts', {
       onDelete: 'cascade',
     }),
   updatedBy: text('updatedBy').references(() => users.id),
+  updatedAt: timestamp('updatedAt').defaultNow(),
   user_id: text('user_id')
     .notNull()
     .references(() => users.id, {
@@ -116,10 +117,18 @@ export const userOrganizationsRelations = relations(
   }),
 );
 
-export const organizationRelations = relations(organization, ({ many }) => ({
-  posts: many(posts),
-  users: many(userOrganizations),
-}));
+export const organizationRelations = relations(
+  organization,
+  ({ many, one }) => ({
+    posts: many(posts),
+    users: many(userOrganizations),
+    invites: many(organizationInvites),
+    settings: one(settings, {
+      fields: [organization.id],
+      references: [settings.organization_id],
+    }),
+  }),
+);
 
 export const postsRelations = relations(posts, ({ many, one }) => ({
   organization: one(organization, {
@@ -128,6 +137,10 @@ export const postsRelations = relations(posts, ({ many, one }) => ({
   }),
   author: one(users, {
     fields: [posts.user_id],
+    references: [users.id],
+  }),
+  updatedBy: one(users, {
+    fields: [posts.updatedBy],
     references: [users.id],
   }),
 }));
@@ -162,7 +175,6 @@ export const organizationInvites = pgTable('organization_invites', {
   ),
 });
 
-//organizationInvites can have ONLY an combination of user_id and organization_id
 export const organizationInvitesRelations = relations(
   organizationInvites,
   ({ one }) => ({
@@ -173,6 +185,28 @@ export const organizationInvitesRelations = relations(
     organization: one(organization, {
       fields: [organizationInvites.organization_id],
       references: [organization.id],
+    }),
+  }),
+);
+
+export enum SettingsKey {
+  DELETE_CHECKED_POSTS = 'delete_checked_posts',
+}
+
+export const settings = pgTable(
+  'settings',
+  {
+    id: text('id')
+      .notNull()
+      .$defaultFn(() => createId()),
+    key: text('key').$type<SettingsKey>().notNull(),
+    value: text('value'),
+    enabled: boolean('enabled').default(false),
+    organization_id: text('organization_id').references(() => organization.id),
+  },
+  (settings) => ({
+    compoundKey: primaryKey({
+      columns: [settings.key, settings.organization_id],
     }),
   }),
 );
