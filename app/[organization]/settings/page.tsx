@@ -23,7 +23,7 @@ export default async function OrgSettings({
   await queryClient.fetchQuery({
     queryKey: ['settings'],
     queryFn: () => listSettings({ org_name: organization }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10,
   });
 
   return (

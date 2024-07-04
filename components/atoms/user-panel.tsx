@@ -36,9 +36,9 @@ export default function OrgPanel() {
             <div className="flex items-center gap-4  max-w-48">
               <p
                 className="font-medium text-sm truncate"
-                title={organization?.name}
+                title={organization?.slug}
               >
-                {organization?.name}
+                {organization?.slug}
               </p>
             </div>
             {organization?.otp && (

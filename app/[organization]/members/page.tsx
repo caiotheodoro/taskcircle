@@ -23,7 +23,7 @@ export default async function Manage({
   await queryClient.fetchQuery({
     queryKey: ['users-and-invites'],
     queryFn: () => listUsersAndPendingInvites({ org_name: organization }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10,
   });
 
   return (

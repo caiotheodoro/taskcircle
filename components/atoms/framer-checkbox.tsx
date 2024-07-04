@@ -63,8 +63,10 @@ export default function FramerCheckbox({
   const [isChecked, setIsChecked] = useState(checked);
 
   useEffect(() => {
-    setIsChecked(checked);
-  }, [checked]);
+    if (checked !== isChecked) {
+      setIsChecked(checked);
+    }
+  }, [checked, isChecked]);
 
   return (
     <div className="flex items-center">

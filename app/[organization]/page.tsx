@@ -22,7 +22,7 @@ export default async function Organization({
   await queryClient.fetchQuery({
     queryKey: ['organizations'],
     queryFn: () => getOrganization({ org_name: organization }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10,
   });
 
   if (!/^[a-zA-Z0-9-]{1,40}$/.test(organization)) {
