@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { motion } from 'framer-motion';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 
@@ -17,18 +19,25 @@ export default function UserCard({
   children,
 }: Readonly<UserCardProps>) {
   return (
-    <Card className="flex items-center justify-between p-4">
-      <div className="flex items-center gap-4">
-        <Avatar>
-          <AvatarImage src={profileImage} />
-          <AvatarFallback>{name[0]}</AvatarFallback>
-        </Avatar>
-        <div className="grid gap-0.5">
-          <div className="font-medium">{name}</div>
-          <div className="text-sm text-muted-foreground">{email}</div>
+    <motion.div
+      layout
+      animate={{ opacity: 1 }}
+      initial={{ opacity: 0 }}
+      exit={{ opacity: 0 }}
+    >
+      <Card className="flex items-center justify-between p-4">
+        <div className="flex items-center gap-4">
+          <Avatar>
+            <AvatarImage src={profileImage} />
+            <AvatarFallback>{name[0]}</AvatarFallback>
+          </Avatar>
+          <div className="grid gap-0.5">
+            <div className="font-medium">{name}</div>
+            <div className="text-sm text-muted-foreground">{email}</div>
+          </div>
         </div>
-      </div>
-      {children}
-    </Card>
+        {children}
+      </Card>
+    </motion.div>
   );
 }

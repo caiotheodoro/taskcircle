@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence } from 'framer-motion';
 import { TrashIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 
@@ -91,46 +92,48 @@ export function Members() {
                   <h2 className="text-xl font-semibold">Users</h2>
                 </div>
                 <div className="mt-4 grid gap-4">
-                  {data?.success.users?.length > 0 ? (
-                    data?.success.users.map((user) => {
-                      const { user: orgUser } = user;
+                  <AnimatePresence presenceAffectsLayout>
+                    {data?.success.users?.length > 0 ? (
+                      data?.success.users.map((user) => {
+                        const { user: orgUser } = user;
 
-                      return (
-                        <UserCard
-                          email={orgUser.email}
-                          name={orgUser.name}
-                          profileImage={orgUser.image}
-                          key={orgUser.id}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="ml-auto"
-                            onClick={() =>
-                              executeDeleteMembership({
-                                org_id: organization.id,
-                                user_id: orgUser.id,
-                              })
-                            }
+                        return (
+                          <UserCard
+                            email={orgUser.email}
+                            name={orgUser.name}
+                            profileImage={orgUser.image}
+                            key={orgUser.id}
                           >
-                            <TrashIcon className="h-5 w-5" />
-                            <span className="sr-only">Remove user</span>
-                          </Button>
-                        </UserCard>
-                      );
-                    })
-                  ) : (
-                    <div className="flex items-center justify-center p-8 text-center">
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-semibold">
-                          No Users Found
-                        </h3>
-                        <p className="text-muted-foreground">
-                          You haven&apos;t added any users yet.
-                        </p>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="ml-auto"
+                              onClick={() =>
+                                executeDeleteMembership({
+                                  org_id: organization.id,
+                                  user_id: orgUser.id,
+                                })
+                              }
+                            >
+                              <TrashIcon className="h-5 w-5" />
+                              <span className="sr-only">Remove user</span>
+                            </Button>
+                          </UserCard>
+                        );
+                      })
+                    ) : (
+                      <div className="flex items-center justify-center p-8 text-center">
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">
+                            No Users Found
+                          </h3>
+                          <p className="text-muted-foreground">
+                            You haven&apos;t added any users yet.
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
               <div>
