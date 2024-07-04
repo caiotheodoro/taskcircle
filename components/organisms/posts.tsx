@@ -146,15 +146,22 @@ export default function Posts() {
                 </FramerCheckbox>
               </div>
               <div className="text-sm text-muted-foreground w-full flex justify-end -mt-3">
-                <span className="text-muted-foreground text-xs flex gap-3">
-                  {post.updatedBy && post.status && (
-                    <>
-                      <p className="text-muted-foreground text-xs">
-                        Checked by <b>{post.updatedBy?.name}</b>
-                      </p>
-                      •
-                    </>
-                  )}
+                <span className="text-muted-foreground text-xs flex gap-3 ease-in transition-all">
+                  <AnimatePresence presenceAffectsLayout>
+                    {post.updatedBy && post.status && (
+                      <motion.div
+                        className="text-muted-foreground text-xs flex gap-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        <p className="text-muted-foreground text-xs">
+                          Checked by <b>{post.updatedBy?.name}</b>
+                        </p>
+                        •
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   <p className="text-muted-foreground text-xs">
                     {new Date(post.timestamp).toLocaleTimeString([], {
