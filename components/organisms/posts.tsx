@@ -14,13 +14,14 @@ import useOrganizationStore from '@/app/hooks/stores/organization';
 import { HookActionStatus } from '@/app/utils/get-org-status';
 import CententralizedContent from '@/components/molecules/cententralized-content';
 import { CardMotion } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetPosts } from '@/hooks/posts';
 import { changePostStatus, deletePost } from '@/server/actions/posts';
 import { createClient } from '@/server/real-time/client';
 import { listenToPosts } from '@/server/real-time/watchers';
+
+import FramerCheckbox from '../atoms/framer-checkbox';
 
 export default function Posts() {
   const queryClient = useQueryClient();
@@ -134,16 +135,15 @@ export default function Posts() {
                 </div>
               </div>
               <div className="flex gap-2 items-center ">
-                <Checkbox
-                  onClick={() => handleChangeStatus(post.id, !post.status)}
+                <FramerCheckbox
+                  id={post.id}
                   checked={post.status}
+                  onClick={() => handleChangeStatus(post.id, !post.status)}
                   disabled={status === HookActionStatus.EXECUTING}
-                />
-                <p
-                  className={`text-primary text-sm ${post.status && 'line-through'}`}
                 >
-                  {post.content}
-                </p>
+                  <FramerCheckbox.Indicator />
+                  <FramerCheckbox.Label>{post.content}</FramerCheckbox.Label>
+                </FramerCheckbox>
               </div>
               <div className="text-sm text-muted-foreground w-full flex justify-end -mt-3">
                 <span className="text-muted-foreground text-xs flex gap-3">
