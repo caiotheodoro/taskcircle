@@ -1,4 +1,11 @@
-import { ReactNode, createContext, useContext, useMemo, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { motion } from 'framer-motion';
 
@@ -54,6 +61,10 @@ export default function FramerCheckbox({
   id,
 }: Readonly<CheckboxProps>) {
   const [isChecked, setIsChecked] = useState(checked);
+
+  useEffect(() => {
+    setIsChecked(checked);
+  }, [checked]);
 
   return (
     <div className="flex items-center">
