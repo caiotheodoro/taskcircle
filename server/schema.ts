@@ -69,7 +69,6 @@ export const organization = pgTable('organization', {
   name: text('name').notNull(),
   slug: text('slug').notNull(),
   description: text('description'),
-  //OTP: a mix of numbers and letters of length 5
   otp: text('otp')
     .notNull()
     .$defaultFn(() => cre().toUpperCase()),

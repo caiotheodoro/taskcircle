@@ -39,8 +39,8 @@ export function OrganizationForm() {
     resolver: zodResolver(orgSchema),
     defaultValues: {
       description: '',
-      name: '',
-      slug: '',
+      name: organization.name,
+      slug: organization.name,
     },
   });
 
@@ -89,7 +89,7 @@ export function OrganizationForm() {
                     <FormLabel>Group Slug</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter a unique slug for your group"
+                        placeholder="Enter a slug for your group"
                         {...field}
                       />
                     </FormControl>
