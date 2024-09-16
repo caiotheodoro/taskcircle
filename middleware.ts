@@ -11,10 +11,10 @@ export async function middleware(request: NextRequest) {
 
   const isAuthPage = request.nextUrl.pathname.startsWith('/login');
 
-  if (!token && !isAuthPage) {
+  /* if (!token && !isAuthPage) {
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
-  }
+  }*/
 
   if (token && isAuthPage) {
     const homeUrl = new URL('/', request.url);
