@@ -57,6 +57,7 @@ export const authConfig = {
     }),
   ],
   adapter: DrizzleAdapter(db),
+
   callbacks: {
     async session({ session, token }) {
       if (session.user && token.sub) {
@@ -77,9 +78,6 @@ export const authConfig = {
         token.id = user.id;
       }
       return token;
-    },
-    authorized: async ({ auth }) => {
-      return !!auth;
     },
   },
   session: { strategy: 'jwt' },
