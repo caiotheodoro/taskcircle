@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect } from 'react';
 
-import Image from 'next/image';
-
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { GhostIcon, Trash } from 'lucide-react';
@@ -17,11 +15,13 @@ import { CardMotion } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetPosts } from '@/hooks/posts';
+import { getInitials, getTimeAgo } from '@/lib/utils';
 import { changePostStatus, deletePost } from '@/server/actions/posts';
 import { createClient } from '@/server/real-time/client';
 import { listenToPosts } from '@/server/real-time/watchers';
 
 import FramerCheckbox from '../atoms/framer-checkbox';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 export default function Posts() {
   const queryClient = useQueryClient();
@@ -118,13 +118,12 @@ export default function Posts() {
             >
               <div className="flex justify-between">
                 <div className="flex gap-2 items-center">
-                  <Image
-                    src={post.author.image}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                    alt={post.author.name}
-                  />
+                  <Avatar className="w-6 h-6">
+                    <AvatarImage src={post.author?.image || ''} />
+                    <AvatarFallback className="text-xs font-bold">
+                      {getInitials(post.author?.name || '')}
+                    </AvatarFallback>
+                  </Avatar>
                   <h2 className="text-sm font-normal">{post.author.name}</h2>
                 </div>
                 <div className="flex gap-3 items-center">
@@ -146,34 +145,23 @@ export default function Posts() {
                 </FramerCheckbox>
               </div>
               <div className="text-sm text-muted-foreground w-full flex justify-end -mt-3">
-                <span className="text-muted-foreground text-xs flex gap-3 ease-in transition-all">
+                <span className="text-muted-foreground text-xs flex gap-2 ease-in transition-all">
                   <AnimatePresence presenceAffectsLayout>
                     {post.updatedBy && post.status && (
                       <motion.div
-                        className="text-muted-foreground text-xs flex gap-3"
+                        className="text-muted-foreground text-xs flex gap-2"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                       >
                         <p className="text-muted-foreground text-xs">
                           Checked by <b>{post.updatedBy?.name}</b>
+                          {' • '}
+                          {getTimeAgo(new Date(post.updatedAt))}
                         </p>
-                        •
                       </motion.div>
                     )}
                   </AnimatePresence>
-
-                  <p className="text-muted-foreground text-xs">
-                    {new Date(post.timestamp).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                    ,{' '}
-                    {new Date(post.timestamp).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </p>
                 </span>
               </div>
             </motion.div>

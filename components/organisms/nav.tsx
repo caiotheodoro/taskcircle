@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 
 import Logo from '@/components/atoms/logo';
 import OrgPanel from '@/components/atoms/user-panel';
@@ -10,7 +9,6 @@ import { auth } from '@/server/auth';
 export default async function Nav() {
   const user = await auth();
 
-  if (!user) redirect('/api/auth/signin');
   return (
     <nav className="animate-in fade-in-25 duration-700">
       <ul className="flex py-8 justify-between items-center text-3xl relative">

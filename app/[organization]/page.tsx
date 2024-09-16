@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query';
 
 import CententralizedContent from '@/components/molecules/cententralized-content';
+import Nav from '@/components/organisms/nav';
 import Organizations from '@/components/organisms/organizations';
 import { getOrganization } from '@/server/actions/organization';
 
@@ -40,10 +41,13 @@ export default async function Organization({
   }
 
   return (
-    <main>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <Organizations currOrg={organization} />
-      </HydrationBoundary>
-    </main>
+    <div className="p-4 lg:px-20  xl:px-32 sm:px-12 md:px-16 2xl:px-64">
+      <Nav />
+      <main>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <Organizations currOrg={organization} />
+        </HydrationBoundary>
+      </main>
+    </div>
   );
 }

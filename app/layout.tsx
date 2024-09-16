@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 
-import Nav from '@/components/organisms/nav';
 import { Toaster } from '@/components/ui/toaster';
 import Providers from '@/lib/query-provider';
 
@@ -23,13 +22,10 @@ export default function RootLayout({ children }: Readonly<LayoutProps>) {
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
-        <div className="p-4 lg:px-20  xl:px-32 sm:px-12 md:px-16 2xl:px-64">
-          <Providers>
-            <Nav />
-            {children}
-            <Toaster />
-          </Providers>
-        </div>
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

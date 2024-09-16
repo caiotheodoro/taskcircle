@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { LogOut, Settings } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { FaUser } from 'react-icons/fa';
 
 import useOrganizationStore from '@/app/hooks/stores/organization';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getInitials } from '@/lib/utils';
 import { Role } from '@/server/schema';
 
 export const UserButton = ({ user }: Session) => {
@@ -27,8 +27,8 @@ export const UserButton = ({ user }: Session) => {
       <DropdownMenuTrigger className="focus-visible:invisible">
         <Avatar>
           <AvatarImage src={user?.image || ''} />
-          <AvatarFallback>
-            <FaUser className="text-white" />
+          <AvatarFallback className="text-sm font-bold">
+            {getInitials(user?.name || '')}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -51,7 +51,7 @@ export const UserButton = ({ user }: Session) => {
 
         <DropdownMenuItem
           className="py-2 px-2 flex items-center font-medium hover:text-destructive cursor-pointer"
-          onClick={() => signOut()}
+          onClick={() => signOut({ callbackUrl: '/login' })}
         >
           <LogOut className="mr-4 px-1" /> Sign Out
         </DropdownMenuItem>
