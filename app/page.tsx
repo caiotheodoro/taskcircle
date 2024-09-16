@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 import {
   HydrationBoundary,
   QueryClient,
@@ -8,9 +10,13 @@ import Footer from '@/components/organisms/footer';
 import Nav from '@/components/organisms/nav';
 import OrganizationList from '@/components/organisms/organization-list';
 import { fetchOrganizations } from '@/server/actions/organization';
+import { auth } from '@/server/auth';
 
 export default async function Home() {
   const queryClient = new QueryClient();
+  const session = await auth();
+
+  if (!session) redirect('/login');
 
   await queryClient.fetchQuery({
     queryKey: ['organizations'],
