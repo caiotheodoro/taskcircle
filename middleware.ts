@@ -1,24 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getToken } from 'next-auth/jwt';
+import { auth } from './server/auth';
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-    salt: process.env.NEXTAUTH_SALT,
-  });
-
-  console.log('token', token);
+  const session = await auth();
 
   const isAuthPage = request.nextUrl.pathname.startsWith('/login');
 
-  /* if (!token && !isAuthPage) {
+  if (!session && !isAuthPage) {
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
-  }*/
+  }
 
-  if (token && isAuthPage) {
+  if (session && isAuthPage) {
     const homeUrl = new URL('/', request.url);
     return NextResponse.redirect(homeUrl);
   }

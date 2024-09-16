@@ -4568,25 +4568,20 @@ path-type@^4.0.0:
   resolved "https://registry.npmjs.org/path-type/-/path-type-4.0.0.tgz"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pg-cloudflare@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/pg-cloudflare/-/pg-cloudflare-1.1.1.tgz"
-  integrity sha512-xWPagP/4B6BgFO+EKz3JONXv3YDgvkbVrGw2mTo3D6tVDQRh1e7cqVGvyR3BE+eQgAvx1XhW/iEASj4/jCWl3Q==
-
-pg-connection-string@^2.6.2:
-  version "2.6.2"
-  resolved "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.6.2.tgz"
-  integrity sha512-ch6OwaeaPYcova4kKZ15sbJ2hKb/VP48ZD2gE7i1J+L4MspCtBMAx8nMgz7bksc7IojCIIWuEhHibSMFH8m8oA==
+pg-connection-string@^2.5.0:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.6.4.tgz#f543862adfa49fa4e14bc8a8892d2a84d754246d"
+  integrity sha512-v+Z7W/0EO707aNMaAEfiGnGL9sxxumwLl2fJvCQtMn9Fxsg+lPpPkdcyBSv/KFgpGdYkMfn+EI1Or2EHjpgLCA==
 
 pg-int8@1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/pg-int8/-/pg-int8-1.0.1.tgz"
   integrity sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==
 
-pg-pool@^3.6.1:
-  version "3.6.1"
-  resolved "https://registry.npmjs.org/pg-pool/-/pg-pool-3.6.1.tgz"
-  integrity sha512-jizsIzhkIitxCGfPRzJn1ZdcosIt3pz9Sh3V01fm1vZnbnCMgmGl5wvGGdNN2EL9Rmb0EcFoCkixH4Pu+sP9Og==
+pg-pool@^3.6.0:
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.6.2.tgz#3a592370b8ae3f02a7c8130d245bc02fa2c5f3f2"
+  integrity sha512-Htjbg8BlwXqSBQ9V8Vjtc+vzf/6fVUuak/3/XXKA9oxZprwW3IMDQTGHP+KDmVL7rtd+R1QjbnCFPuTHm3G4hg==
 
 pg-protocol@*, pg-protocol@^1.6.0:
   version "1.6.0"
@@ -4604,20 +4599,18 @@ pg-types@^2.1.0, pg-types@^2.2.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@^8.11.3:
-  version "8.11.3"
-  resolved "https://registry.npmjs.org/pg/-/pg-8.11.3.tgz"
-  integrity sha512-+9iuvG8QfaaUrrph+kpF24cXkH1YOOUeArRNYIxq1viYHZagBxrTno7cecY1Fa44tJeZvaoG+Djpkc3JwehN5g==
+pg@8.10.0:
+  version "8.10.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.10.0.tgz#5b8379c9b4a36451d110fc8cd98fc325fe62ad24"
+  integrity sha512-ke7o7qSTMb47iwzOSaZMfeR7xToFdkE71ifIipOAAaLIM0DYzfOAXlgFFmYUIE2BcJtvnVlGCID84ZzCegE8CQ==
   dependencies:
     buffer-writer "2.0.0"
     packet-reader "1.0.0"
-    pg-connection-string "^2.6.2"
-    pg-pool "^3.6.1"
+    pg-connection-string "^2.5.0"
+    pg-pool "^3.6.0"
     pg-protocol "^1.6.0"
     pg-types "^2.1.0"
     pgpass "1.x"
-  optionalDependencies:
-    pg-cloudflare "^1.1.1"
 
 pgpass@1.x:
   version "1.0.5"
@@ -4735,10 +4728,10 @@ postgres-interval@^1.1.0:
   dependencies:
     xtend "^4.0.0"
 
-postgres@^3.4.3:
-  version "3.4.3"
-  resolved "https://registry.npmjs.org/postgres/-/postgres-3.4.3.tgz"
-  integrity sha512-iHJn4+M9vbTdHSdDzNkC0crHq+1CUdFhx+YqCE+SqWxPjm+Zu63jq7yZborOBF64c8pc58O5uMudyL1FQcHacA==
+postgres@3.3:
+  version "3.3.5"
+  resolved "https://registry.yarnpkg.com/postgres/-/postgres-3.3.5.tgz#8431605aae2112759d50e362fc08759165455677"
+  integrity sha512-+JD93VELV9gHkqpV5gdL5/70HdGtEw4/XE1S4BC8f1mcPmdib3K5XsKVbnR1XcAyC41zOnifJ+9YRKxdIsXiUw==
 
 preact-render-to-string@5.2.3:
   version "5.2.3"

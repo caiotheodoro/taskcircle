@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
   logging: {
     fetches: {
       fullUrl: true,
@@ -8,13 +7,22 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      { hostname: "avatars.githubusercontent.com", protocol: "https" },
-      { hostname: "lh3.googleusercontent.com", protocol: "https" },
+      { hostname: 'avatars.githubusercontent.com', protocol: 'https' },
+      { hostname: 'lh3.googleusercontent.com', protocol: 'https' },
     ],
   },
   typescript: {
     ignoreBuildErrors: true,
   },
-}
+  webpack: (config, { webpack }) => {
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^pg-native$|^cloudflare:sockets$/,
+      }),
+    );
 
-module.exports = nextConfig
+    return config;
+  },
+};
+
+module.exports = nextConfig;
