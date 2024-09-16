@@ -16,9 +16,11 @@ import {
 import Logo from '../atoms/logo';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { useToast } from '../ui/use-toast';
 
 export default function LoginScreen() {
   const [guestName, setGuestName] = useState('');
+  const { toast } = useToast();
 
   const handleSocialLogin = (provider: string) => {
     signIn(provider.toLowerCase(), { callbackUrl: '/' });
@@ -26,10 +28,18 @@ export default function LoginScreen() {
 
   const handleGuestLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (guestName.trim()) {
-      await signIn('credentials', {
-        name: guestName,
-        callbackUrl: '/',
+    try {
+      if (guestName.trim()) {
+        await signIn('credentials', {
+          name: guestName,
+          callbackUrl: '/',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to login as guest',
+        variant: 'destructive',
       });
     }
   };
