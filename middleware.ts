@@ -9,6 +9,8 @@ export async function middleware(request: NextRequest) {
     salt: process.env.NEXTAUTH_SALT,
   });
 
+  console.log('token', token);
+
   const isAuthPage = request.nextUrl.pathname.startsWith('/login');
 
   if (!token && !isAuthPage) {

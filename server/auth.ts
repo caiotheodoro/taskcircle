@@ -40,6 +40,8 @@ export const authConfig = {
             email,
           );
 
+          console.log('response', response);
+
           if (response.error) return null;
 
           user = {
@@ -51,6 +53,8 @@ export const authConfig = {
             image: null,
           };
         }
+
+        console.log('user', user);
 
         return user;
       },

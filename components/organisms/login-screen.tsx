@@ -29,7 +29,7 @@ export default function LoginScreen() {
     if (guestName.trim()) {
       await signIn('credentials', {
         name: guestName,
-        callbackUrl: '/',
+        //callbackUrl: '/',
       });
     }
   };
