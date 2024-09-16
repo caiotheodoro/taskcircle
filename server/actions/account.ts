@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { createId } from '@paralleldrive/cuid2';
 import { eq } from 'drizzle-orm';
 import { createSafeActionClient } from 'next-safe-action';
 import { z } from 'zod';
@@ -50,6 +51,32 @@ export const deleteAccount = async () => {
     await db.delete(accounts).where(eq(accounts.userId, session.user.id));
     revalidatePath('/');
     return { success: MessageService.DELETED };
+  } catch (error) {
+    return { error: MessageService.GENERIC_ERROR };
+  }
+};
+
+export const createGuestAccountAndUser = async (
+  name: string,
+  email: string,
+) => {
+  try {
+    const userId = createId();
+
+    await db.insert(users).values({
+      id: userId,
+      name,
+      email,
+    });
+
+    await db.insert(accounts).values({
+      userId,
+      provider: 'credentials',
+      type: 'email',
+      providerAccountId: userId,
+    });
+
+    return { success: MessageService.CREATED, userId };
   } catch (error) {
     return { error: MessageService.GENERIC_ERROR };
   }
