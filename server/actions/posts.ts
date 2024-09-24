@@ -42,6 +42,7 @@ const deleteSchema = z.object({
 export const deletePost = action(deleteSchema, async ({ id }) => {
   try {
     await db.delete(posts).where(eq(posts.id, id));
+
     revalidatePath('/');
     return { success: PostService.DELETED };
   } catch (error) {

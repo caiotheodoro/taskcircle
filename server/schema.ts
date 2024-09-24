@@ -162,7 +162,7 @@ export const postsRelations = relations(posts, ({ many, one }) => ({
     fields: [posts.updatedBy],
     references: [users.id],
   }),
-  comments: many(comments), // Add this line
+  comments: many(comments),
 }));
 
 export enum OrganizationInviteStatus {

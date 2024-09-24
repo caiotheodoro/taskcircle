@@ -59,6 +59,15 @@ export default function Posts() {
         queryKey: ['posts'],
       });
     });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [organization.id, queryClient]);
+
+  useEffect(() => {
+    const supabase = createClient();
+
     const channelComments = listenToComments(
       supabase,
       organization.id,
@@ -70,7 +79,6 @@ export default function Posts() {
     );
 
     return () => {
-      supabase.removeChannel(channel);
       supabase.removeChannel(channelComments);
     };
   }, [organization.id, queryClient]);

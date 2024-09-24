@@ -80,7 +80,7 @@ export const listenToComments = (
         table: 'comments',
       },
       (payload: Payload) => {
-        const postId: string = payload.new?.post_id || payload.old?.post_id;
+        const postId: string = payload?.new?.post_id || payload?.old?.post_id;
         if (!postId) {
           return;
         }
