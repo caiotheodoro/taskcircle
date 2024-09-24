@@ -30,7 +30,7 @@ export const getTimeAgo = (date: Date) => {
   if (days > 0) return `${days}d`;
   if (hours > 0) return `${hours}h`;
 
-  if (minutes === 0) return 'just now';
+  if (minutes <= 0) return 'just now';
   return `${minutes}m`;
 };
 

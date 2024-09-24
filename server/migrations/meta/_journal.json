@@ -330,6 +330,69 @@
       "when": 1720045276684,
       "tag": "0046_swift_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "5",
+      "when": 1727148781865,
+      "tag": "0047_petite_hannibal_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "5",
+      "when": 1727148851296,
+      "tag": "0048_unknown_hairball",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "5",
+      "when": 1727148898575,
+      "tag": "0049_magical_tyger_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "5",
+      "when": 1727148966739,
+      "tag": "0050_chunky_lady_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "5",
+      "when": 1727149009954,
+      "tag": "0051_wakeful_yellow_claw",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "5",
+      "when": 1727149034026,
+      "tag": "0052_graceful_metal_master",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "5",
+      "when": 1727153852138,
+      "tag": "0053_dazzling_thunderbolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "5",
+      "when": 1727153919629,
+      "tag": "0054_conscious_bloodstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "5",
+      "when": 1727153939589,
+      "tag": "0055_third_jocasta",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 import type { AdapterAccount } from '@auth/core/adapters';
 import { createId, init } from '@paralleldrive/cuid2';
 import { relations } from 'drizzle-orm';
-import { boolean, integer, pgTable, text } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { primaryKey, timestamp } from 'drizzle-orm/pg-core';
 
 const cre = init({ length: 5 });
@@ -79,23 +79,43 @@ export enum Role {
   MEMBER = 'member',
 }
 
-export const userOrganizations = pgTable('user_organizations', {
-  id: text('id')
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  user_id: text('user_id')
-    .notNull()
-    .references(() => users.id, {
-      onDelete: 'cascade',
+export const settings = pgTable(
+  'settings',
+  {
+    id: text('id')
+      .notNull()
+      .$defaultFn(() => createId()),
+    key: text('key').$type<SettingsKey>().notNull(),
+    value: text('value'),
+    enabled: boolean('enabled').default(false),
+    organization_id: text('organization_id').references(() => organization.id),
+  },
+  (settings) => ({
+    compoundKey: primaryKey({
+      columns: [settings.key, settings.organization_id],
     }),
-  organization_id: text('organization_id')
-    .notNull()
-    .references(() => organization.id, {
-      onDelete: 'cascade',
-    }),
-  role: text('role').$type<Role>().notNull(),
-});
+  }),
+);
+
+export const userOrganizations = pgTable(
+  'user_organizations',
+  {
+    user_id: text('user_id')
+      .notNull()
+      .references(() => users.id, {
+        onDelete: 'cascade',
+      }),
+    organization_id: text('organization_id')
+      .notNull()
+      .references(() => organization.id, {
+        onDelete: 'cascade',
+      }),
+    role: text('role').$type<Role>().notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.user_id, table.organization_id] }),
+  }),
+);
 
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
@@ -142,6 +162,7 @@ export const postsRelations = relations(posts, ({ many, one }) => ({
     fields: [posts.updatedBy],
     references: [users.id],
   }),
+  comments: many(comments), // Add this line
 }));
 
 export enum OrganizationInviteStatus {
@@ -192,20 +213,36 @@ export enum SettingsKey {
   DELETE_CHECKED_POSTS = 'delete_checked_posts',
 }
 
-export const settings = pgTable(
-  'settings',
-  {
-    id: text('id')
-      .notNull()
-      .$defaultFn(() => createId()),
-    key: text('key').$type<SettingsKey>().notNull(),
-    value: text('value'),
-    enabled: boolean('enabled').default(false),
-    organization_id: text('organization_id').references(() => organization.id),
-  },
-  (settings) => ({
-    compoundKey: primaryKey({
-      columns: [settings.key, settings.organization_id],
+// Add this new table definition
+
+export const comments = pgTable('comments', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => createId()),
+  content: varchar('content', { length: 500 }).notNull(),
+  post_id: text('post_id')
+    .notNull()
+    .references(() => posts.id, {
+      onDelete: 'cascade',
     }),
+  user_id: text('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  created_at: timestamp('created_at').defaultNow(),
+  deleted_at: timestamp('deleted_at'),
+});
+
+// Add relations for comments
+export const commentsRelations = relations(comments, ({ one }) => ({
+  post: one(posts, {
+    fields: [comments.post_id],
+    references: [posts.id],
   }),
-);
+  author: one(users, {
+    fields: [comments.user_id],
+    references: [users.id],
+  }),
+}));

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { eq } from 'drizzle-orm';
+import { eq, isNull } from 'drizzle-orm';
 import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
@@ -12,6 +12,7 @@ import { auth } from '@/server/auth';
 import { OrganizationService } from '@/server/messages/organization';
 import { PostService } from '@/server/messages/posts';
 import { posts } from '@/server/schema';
+import { comments } from '@/server/schema';
 
 import { fetchOrganizationById } from './shared';
 
@@ -48,6 +49,43 @@ export const deletePost = action(deleteSchema, async ({ id }) => {
   }
 });
 
+const createCommentSchema = z.object({
+  content: z.string().min(1).max(500),
+  post_id: z.string(),
+  user_id: z.string(),
+});
+
+export const createComment = action(
+  createCommentSchema,
+  async ({ content, post_id, user_id }) => {
+    const newComment = await db.insert(comments).values({
+      content,
+      post_id,
+      user_id,
+    });
+
+    revalidatePath('/');
+
+    if (!newComment) return { error: PostService.GENERIC_ERROR };
+    return { success: PostService.COMMENT_CREATED };
+  },
+);
+
+export const deleteComment = action(deleteSchema, async ({ id }) => {
+  try {
+    await db
+      .update(comments)
+      .set({ deleted_at: new Date() })
+      .where(eq(comments.id, id));
+
+    revalidatePath('/');
+
+    return { success: PostService.DELETED };
+  } catch (error) {
+    return { error: PostService.GENERIC_ERROR };
+  }
+});
+
 export const fetchPosts = async (org_id) => {
   const org = await fetchOrganizationById(org_id);
 
@@ -57,6 +95,13 @@ export const fetchPosts = async (org_id) => {
     with: {
       author: true,
       updatedBy: true,
+      comments: {
+        with: {
+          author: true,
+        },
+        orderBy: (comments, { asc }) => [asc(comments.created_at)],
+        where: isNull(comments.deleted_at),
+      },
     },
     where: eq(posts.organization_id, org.id),
     orderBy: (posts, { desc }) => [desc(posts.timestamp)],

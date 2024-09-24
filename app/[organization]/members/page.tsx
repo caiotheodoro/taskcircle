@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 
 import { Members } from '@/components/organisms/members';
+import Nav from '@/components/organisms/nav';
 import { listUsersAndPendingInvites } from '@/server/actions/membership';
 import { auth } from '@/server/auth';
 
@@ -33,10 +34,13 @@ export default async function Manage({
   if (!session) redirect('/login');
 
   return (
-    <main>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <Members />
-      </HydrationBoundary>
-    </main>
+    <div className="p-4 lg:px-20  xl:px-32 sm:px-12 md:px-16 2xl:px-64">
+      <Nav />
+      <main>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <Members />
+        </HydrationBoundary>
+      </main>
+    </div>
   );
 }
