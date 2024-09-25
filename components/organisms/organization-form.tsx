@@ -6,7 +6,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import useOrganizationStore from '@/app/hooks/stores/organization';
+import { Organization } from '@/app/hooks/stores/organization';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -30,8 +30,10 @@ import { useToast } from '@/components/ui/use-toast';
 import { orgSchema } from '@/lib/formSchema';
 import { createOrganization } from '@/server/actions/organization';
 
-export function OrganizationForm() {
-  const { organization } = useOrganizationStore();
+interface OrganizationFormProps {
+  organization: Organization;
+}
+export function OrganizationForm({ organization }: OrganizationFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -39,8 +41,8 @@ export function OrganizationForm() {
     resolver: zodResolver(orgSchema),
     defaultValues: {
       description: '',
-      name: organization.name,
-      slug: organization.name,
+      name: organization?.name,
+      slug: organization?.slug,
     },
   });
 
@@ -73,7 +75,7 @@ export function OrganizationForm() {
     <Card className="w-full max-w-3xl mx-auto  fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
-          Register {organization.name}
+          Register {organization?.name}
         </CardTitle>
         <CardDescription>Get started with your to-doing!</CardDescription>
       </CardHeader>

@@ -46,13 +46,12 @@ export default async function Organization({
   const data = await formatHydrationState<OrganizationResponse>(
     dehydrate(queryClient),
   );
-  console.log(data);
   return (
     <div className="p-4 lg:px-20  xl:px-32 sm:px-12 md:px-16 2xl:px-64">
       <Nav />
       <main>
         <HydrationBoundary state={data}>
-          <Organizations {...data.data} />
+          <Organizations {...data.data} params={{ organization }} />
         </HydrationBoundary>
       </main>
     </div>

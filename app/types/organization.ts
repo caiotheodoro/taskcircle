@@ -6,5 +6,6 @@ export interface OrganizationResponse {
       status: string;
       organization: Organization;
     };
+    params: { organization: string };
   };
 }

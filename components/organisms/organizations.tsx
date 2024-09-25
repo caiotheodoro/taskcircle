@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import useOrganizationStore from '@/app/hooks/stores/organization';
 import { OrganizationResponse } from '@/app/types/organization';
@@ -14,12 +14,22 @@ import Posts from './posts';
 
 export default function Organizations({
   data: { organization, status },
+  params: { organization: orgName },
 }: Readonly<OrganizationResponse['data']>) {
   const { setOrganization } = useOrganizationStore();
 
+  const org = useMemo(() => {
+    return (
+      organization || {
+        name: orgName,
+        slug: orgName,
+      }
+    );
+  }, [orgName, organization]);
+
   useEffect(() => {
-    setOrganization(organization);
-  }, [organization, setOrganization]);
+    setOrganization(org);
+  }, [org, setOrganization]);
 
   switch (status) {
     case ORGANIZATION_STATUS.CLAIMABLE:
@@ -28,7 +38,7 @@ export default function Organizations({
           layout
           className="flex flex-col mt-6 font-medium border-none shadow-none h-full"
         >
-          <OrganizationForm />
+          <OrganizationForm organization={org} />
         </CardMotion>
       );
     case ORGANIZATION_STATUS.CLAIMED:
