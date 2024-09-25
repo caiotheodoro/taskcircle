@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 
+import useOrganizationStore from '@/app/hooks/stores/organization';
 import { HookActionStatus } from '@/app/utils/get-org-status';
 import { useToast } from '@/components/ui/use-toast';
 import { createComment, deleteComment } from '@/server/actions/messages';
@@ -28,6 +29,7 @@ export default function CommentSection({
   const { data: session } = useSession();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { organization } = useOrganizationStore();
 
   const { execute: executeCreateComment, status: createCommentStatus } =
     useAction(createComment, {
@@ -39,7 +41,7 @@ export default function CommentSection({
         });
 
         queryClient.invalidateQueries({
-          queryKey: ['posts'],
+          queryKey: ['posts', organization.id],
         });
       },
     });
@@ -52,7 +54,7 @@ export default function CommentSection({
         variant: 'success',
       });
       queryClient.invalidateQueries({
-        queryKey: ['posts'],
+        queryKey: ['posts', organization.id],
       });
     },
   });

@@ -25,6 +25,7 @@ export const posts = pgTable('posts', {
     .references(() => users.id, {
       onDelete: 'cascade',
     }),
+  deleted_at: timestamp('deleted_at'),
 });
 
 //a user can be a member of multiple organizations

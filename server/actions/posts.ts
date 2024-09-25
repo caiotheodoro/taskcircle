@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import * as z from 'zod';
 
 import { formSchema } from '@/lib/formSchema';
@@ -38,9 +38,22 @@ export const createPost = action(formSchema, async ({ content, org_id }) => {
 const deleteSchema = z.object({
   id: z.string(),
 });
+
 export const deletePost = action(deleteSchema, async ({ id }) => {
   try {
-    await db.delete(posts).where(eq(posts.id, id));
+    if (!id) {
+      return { error: PostService.INVALID_ID };
+    }
+
+    const result = await db
+      .update(posts)
+      .set({ deleted_at: new Date() })
+      .where(eq(posts.id, id))
+      .returning();
+
+    if (result.length === 0) {
+      return { error: PostService.NOT_FOUND };
+    }
 
     revalidatePath('/');
     return { success: PostService.DELETED };
@@ -49,10 +62,16 @@ export const deletePost = action(deleteSchema, async ({ id }) => {
   }
 });
 
-export const fetchPosts = async (org_id) => {
+export const fetchPosts = async (
+  org_id: string,
+  page: number,
+  limit: number,
+) => {
   const org = await fetchOrganizationById(org_id);
 
   if (!org) return { error: OrganizationService.NOT_FOUND };
+
+  const offset = page * limit;
 
   const orgPosts = await db.query.posts.findMany({
     with: {
@@ -66,8 +85,10 @@ export const fetchPosts = async (org_id) => {
         where: isNull(comments.deleted_at),
       },
     },
-    where: eq(posts.organization_id, org.id),
+    where: and(eq(posts.organization_id, org.id), isNull(posts.deleted_at)),
     orderBy: (posts, { desc }) => [desc(posts.timestamp)],
+    limit: limit,
+    offset: offset,
   });
 
   revalidatePath('/');

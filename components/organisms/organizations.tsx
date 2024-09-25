@@ -62,6 +62,6 @@ export default function Organizations({
         </CardMotion>
       );
     default:
-      return null;
+      return <></>;
   }
 }

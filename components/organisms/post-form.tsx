@@ -42,7 +42,7 @@ export default function PostForm() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ['posts'],
+        queryKey: ['posts', organization.id],
       });
     },
     onError(error) {},
