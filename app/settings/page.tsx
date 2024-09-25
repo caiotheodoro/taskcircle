@@ -7,7 +7,9 @@ export default async function Settings() {
   return (
     <main>
       <CententralizedContent>
-        <SettingsPage />
+        <section aria-label="Settings">
+          <SettingsPage />
+        </section>
       </CententralizedContent>
     </main>
   );

@@ -6,8 +6,8 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
+import Nav from '@/components/layouts/nav';
 import Footer from '@/components/organisms/footer';
-import Nav from '@/components/organisms/nav';
 import OrganizationList from '@/components/organisms/organization-list';
 import { fetchOrganizations } from '@/server/actions/organization';
 import { auth } from '@/server/auth';

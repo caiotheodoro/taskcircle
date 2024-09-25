@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
+import Footer from '../organisms/footer';
 import { Badge } from '../ui/badge';
-import Footer from './footer';
 
 export default function ArchitectureReport() {
   const badges = [

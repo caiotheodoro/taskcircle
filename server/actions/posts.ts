@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache';
 
 import { eq, isNull } from 'drizzle-orm';
-import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
 import { formSchema } from '@/lib/formSchema';
+import { action } from '@/lib/safe-action';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
 import { OrganizationService } from '@/server/messages/organization';
@@ -16,7 +16,6 @@ import { comments } from '@/server/schema';
 
 import { fetchOrganizationById } from './shared';
 
-export const action = createSafeActionClient();
 export const createPost = action(formSchema, async ({ content, org_id }) => {
   const session = await auth();
   const org = await fetchOrganizationById(org_id);
@@ -44,43 +43,6 @@ export const deletePost = action(deleteSchema, async ({ id }) => {
     await db.delete(posts).where(eq(posts.id, id));
 
     revalidatePath('/');
-    return { success: PostService.DELETED };
-  } catch (error) {
-    return { error: PostService.GENERIC_ERROR };
-  }
-});
-
-const createCommentSchema = z.object({
-  content: z.string().min(1).max(500),
-  post_id: z.string(),
-  user_id: z.string(),
-});
-
-export const createComment = action(
-  createCommentSchema,
-  async ({ content, post_id, user_id }) => {
-    const newComment = await db.insert(comments).values({
-      content,
-      post_id,
-      user_id,
-    });
-
-    revalidatePath('/');
-
-    if (!newComment) return { error: PostService.GENERIC_ERROR };
-    return { success: PostService.COMMENT_CREATED };
-  },
-);
-
-export const deleteComment = action(deleteSchema, async ({ id }) => {
-  try {
-    await db
-      .update(comments)
-      .set({ deleted_at: new Date() })
-      .where(eq(comments.id, id));
-
-    revalidatePath('/');
-
     return { success: PostService.DELETED };
   } catch (error) {
     return { error: PostService.GENERIC_ERROR };

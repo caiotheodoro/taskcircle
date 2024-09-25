@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type Organization = {
+export type Organization = {
   id?: string;
   description?: string;
   name?: string;

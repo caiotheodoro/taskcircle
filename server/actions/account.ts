@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 
 import { createId } from '@paralleldrive/cuid2';
 import { eq } from 'drizzle-orm';
-import { createSafeActionClient } from 'next-safe-action';
-import { z } from 'zod';
 
 import { db } from '@/server/';
 import {
@@ -19,9 +17,6 @@ import {
 import { auth } from '../auth';
 import { MessageService } from '../messages/generic';
 
-export const action = createSafeActionClient();
-
-const nullSchema = z.object({}).optional();
 export const deleteAccount = async () => {
   try {
     const session = await auth();

@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache';
 
 import { and, eq } from 'drizzle-orm';
-import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
 import { orgSchema } from '@/lib/formSchema';
+import { action } from '@/lib/safe-action';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
 import { OrganizationService } from '@/server/messages/organization';
@@ -16,8 +16,6 @@ import {
   organizationInvites,
   userOrganizations,
 } from '@/server/schema';
-
-export const action = createSafeActionClient();
 
 const deleteSchema = z.object({
   id: z.string(),

@@ -4,10 +4,13 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
+import Nav from '@/components/layouts/nav';
 import CententralizedContent from '@/components/molecules/cententralized-content';
-import Nav from '@/components/organisms/nav';
 import Organizations from '@/components/organisms/organizations';
 import { getOrganization } from '@/server/actions/organization';
+
+import { OrganizationResponse } from '../types/organization';
+import { formatHydrationState } from '../utils/format-dehydrate';
 
 interface OrganizationProps {
   params: {
@@ -18,14 +21,6 @@ interface OrganizationProps {
 export default async function Organization({
   params: { organization },
 }: Readonly<OrganizationProps>) {
-  const queryClient = new QueryClient();
-
-  await queryClient.fetchQuery({
-    queryKey: ['organizations'],
-    queryFn: () => getOrganization({ org_name: organization }),
-    staleTime: 1000 * 60 * 10,
-  });
-
   if (!/^[a-zA-Z0-9-]{1,40}$/.test(organization)) {
     return (
       <CententralizedContent>
@@ -40,12 +35,24 @@ export default async function Organization({
     );
   }
 
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['organizations'],
+    queryFn: () => getOrganization({ org_name: organization }),
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const data = await formatHydrationState<OrganizationResponse>(
+    dehydrate(queryClient),
+  );
+  console.log(data);
   return (
     <div className="p-4 lg:px-20  xl:px-32 sm:px-12 md:px-16 2xl:px-64">
       <Nav />
       <main>
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <Organizations currOrg={organization} />
+        <HydrationBoundary state={data}>
+          <Organizations {...data.data} />
         </HydrationBoundary>
       </main>
     </div>

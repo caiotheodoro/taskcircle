@@ -5,9 +5,9 @@ import { headers } from 'next/headers';
 
 import { Ratelimit } from '@upstash/ratelimit';
 import { and, eq, gt, ne } from 'drizzle-orm';
-import { createSafeActionClient } from 'next-safe-action';
 import * as z from 'zod';
 
+import { action } from '@/lib/safe-action';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
 import { MessageService } from '@/server/messages/generic';
@@ -22,8 +22,6 @@ import {
 import { redis } from '@/server/upstash';
 
 import { checkAdminStatus, fetchOrganizationById } from './shared';
-
-export const action = createSafeActionClient();
 
 const rateLimit = new Ratelimit({
   redis,

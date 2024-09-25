@@ -8,8 +8,8 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 
+import Nav from '@/components/layouts/nav';
 import { Members } from '@/components/organisms/members';
-import Nav from '@/components/organisms/nav';
 import { listUsersAndPendingInvites } from '@/server/actions/membership';
 import { auth } from '@/server/auth';
 

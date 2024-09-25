@@ -1,17 +1,15 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { createSafeActionClient } from 'next-safe-action';
 import { z } from 'zod';
 
+import { action } from '@/lib/safe-action';
 import { db } from '@/server/';
 import { SettingsKey, organization, settings } from '@/server/schema';
 
 import { auth } from '../auth';
 import { MessageService } from '../messages/generic';
 import { checkAdminStatus } from './shared';
-
-export const action = createSafeActionClient();
 
 const deleteCheckJobSchema = z.object({
   enabled: z.boolean(),

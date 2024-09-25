@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useGetOrganizations } from '@/hooks/organization';
 
 import { OrgDialog } from '../molecules/organization-dialog';
-import WelcomePage from './welcome-page';
+import WelcomePage from '../pages/welcome-page';
 
 export default function OrganizationList() {
   const { data: organizations, error, isLoading } = useGetOrganizations();
