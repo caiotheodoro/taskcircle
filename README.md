@@ -1,3 +1,4 @@
+
 # About the Application
 
 Task Circle is a task management application that allows users to create, manage and collaborate on tasks within an group.
