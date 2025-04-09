@@ -32,7 +32,7 @@ export default function RootLayout({ children }: Readonly<LayoutProps>) {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://taskcircle.vercel.app'),
+  metadataBase: new URL('https://taskcircle.theodoro.dev'),
   robots: {
     follow: true,
     index: true,
