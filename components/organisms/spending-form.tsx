@@ -118,6 +118,12 @@ export default function SpendingForm() {
                       placeholder="0.00"
                       {...field}
                       className="text-base"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
+                          field.onChange(value);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

@@ -40,6 +40,13 @@ export default function FinancePage() {
         queryKey: ['finances'],
       });
     },
+    onError(error) {
+      toast({
+        title: 'Error',
+        description: error.serverError || 'Failed to delete earning',
+        variant: 'destructive',
+      });
+    },
   });
 
   const { execute: executeDeleteSpending } = useAction(deleteSpending, {
@@ -51,6 +58,13 @@ export default function FinancePage() {
       });
       queryClient.invalidateQueries({
         queryKey: ['finances'],
+      });
+    },
+    onError(error) {
+      toast({
+        title: 'Error',
+        description: error.serverError || 'Failed to delete spending',
+        variant: 'destructive',
       });
     },
   });
@@ -249,9 +263,11 @@ export default function FinancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            executeDeleteEarning({ id: earning.id })
-                          }
+                          onClick={() => {
+                            if (earning.id) {
+                              executeDeleteEarning({ id: earning.id });
+                            }
+                          }}
                         >
                           Delete
                         </Button>
@@ -311,9 +327,11 @@ export default function FinancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            executeDeleteEarning({ id: earning.id })
-                          }
+                          onClick={() => {
+                            if (earning.id) {
+                              executeDeleteEarning({ id: earning.id });
+                            }
+                          }}
                         >
                           Delete
                         </Button>
@@ -375,9 +393,11 @@ export default function FinancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            executeDeleteSpending({ id: spending.id })
-                          }
+                          onClick={() => {
+                            if (spending.id) {
+                              executeDeleteSpending({ id: spending.id });
+                            }
+                          }}
                         >
                           Delete
                         </Button>
@@ -430,9 +450,11 @@ export default function FinancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            executeDeleteSpending({ id: spending.id })
-                          }
+                          onClick={() => {
+                            if (spending.id) {
+                              executeDeleteSpending({ id: spending.id });
+                            }
+                          }}
                         >
                           Delete
                         </Button>
@@ -499,9 +521,11 @@ export default function FinancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            executeDeleteSpending({ id: spending.id })
-                          }
+                          onClick={() => {
+                            if (spending.id) {
+                              executeDeleteSpending({ id: spending.id });
+                            }
+                          }}
                         >
                           Delete
                         </Button>

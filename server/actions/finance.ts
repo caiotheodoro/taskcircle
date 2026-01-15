@@ -90,16 +90,20 @@ const deleteEarningSchema = z.object({
 });
 
 export const deleteEarning = action(deleteEarningSchema, async ({ id }) => {
-  const session = await auth();
+  try {
+    const session = await auth();
 
-  if (!session?.user?.id) return { error: 'Unauthorized' };
+    if (!session?.user?.id) return { error: 'Unauthorized' };
 
-  await db
-    .delete(earnings)
-    .where(and(eq(earnings.id, id), eq(earnings.user_id, session.user.id)));
+    await db
+      .delete(earnings)
+      .where(and(eq(earnings.id, id), eq(earnings.user_id, session.user.id)));
 
-  revalidatePath('/financial');
-  return { success: 'Earning deleted successfully' };
+    revalidatePath('/financial');
+    return { success: 'Earning deleted successfully' };
+  } catch (error) {
+    return { error: 'Failed to delete earning' };
+  }
 });
 
 const deleteSpendingSchema = z.object({
@@ -107,14 +111,18 @@ const deleteSpendingSchema = z.object({
 });
 
 export const deleteSpending = action(deleteSpendingSchema, async ({ id }) => {
-  const session = await auth();
+  try {
+    const session = await auth();
 
-  if (!session?.user?.id) return { error: 'Unauthorized' };
+    if (!session?.user?.id) return { error: 'Unauthorized' };
 
-  await db
-    .delete(spendings)
-    .where(and(eq(spendings.id, id), eq(spendings.user_id, session.user.id)));
+    await db
+      .delete(spendings)
+      .where(and(eq(spendings.id, id), eq(spendings.user_id, session.user.id)));
 
-  revalidatePath('/financial');
-  return { success: 'Spending deleted successfully' };
+    revalidatePath('/financial');
+    return { success: 'Spending deleted successfully' };
+  } catch (error) {
+    return { error: 'Failed to delete spending' };
+  }
 });
