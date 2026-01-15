@@ -49,6 +49,7 @@ export default function EarningForm() {
     defaultValues: {
       amount: '',
       description: '',
+      type: 'monthly',
       month: currentMonth,
       year: currentYear,
     },
@@ -69,6 +70,7 @@ export default function EarningForm() {
       form.reset({
         amount: '',
         description: '',
+        type: 'monthly',
         month: currentMonth,
         year: currentYear,
       });
@@ -93,7 +95,7 @@ export default function EarningForm() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-xl font-bold">Register Earning</CardTitle>
-        <CardDescription>Add your monthly earning</CardDescription>
+        <CardDescription>Add your earning</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -130,6 +132,27 @@ export default function EarningForm() {
                       rows={2}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-base">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="once">Once</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

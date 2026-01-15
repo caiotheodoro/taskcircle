@@ -9,7 +9,12 @@ import { earningSchema, spendingSchema } from '@/lib/formSchema';
 import { action } from '@/lib/safe-action';
 import { db } from '@/server/';
 import { auth } from '@/server/auth';
-import { SpendingType, earnings, spendings } from '@/server/schema';
+import {
+  EarningType,
+  SpendingType,
+  earnings,
+  spendings,
+} from '@/server/schema';
 
 export const createEarning = action(earningSchema, async (data) => {
   const session = await auth();
@@ -20,6 +25,7 @@ export const createEarning = action(earningSchema, async (data) => {
     user_id: session.user.id,
     amount: data.amount,
     description: data.description,
+    type: data.type as EarningType,
     month: data.month,
     year: data.year,
   });

@@ -1,0 +1,1 @@
+ALTER TABLE "earnings" ADD COLUMN "type" text NOT NULL;

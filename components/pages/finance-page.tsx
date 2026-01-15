@@ -114,6 +114,23 @@ export default function FinancePage() {
   const earningsList = finances?.success?.earnings || [];
   const spendingsList = finances?.success?.spendings || [];
 
+  const earningsByType = useMemo(() => {
+    const monthly = earningsList.filter((e) => e.type === 'monthly');
+    const once = earningsList.filter((e) => e.type === 'once');
+
+    const monthlyTotal = monthly.reduce(
+      (sum, e) => sum + Number.parseFloat(e.amount),
+      0,
+    );
+
+    const onceTotal = once.reduce(
+      (sum, e) => sum + Number.parseFloat(e.amount),
+      0,
+    );
+
+    return { monthly, once, monthlyTotal, onceTotal };
+  }, [earningsList]);
+
   const spendingsByType = useMemo(() => {
     const monthly = spendingsList.filter((s) => s.type === 'monthly');
     const once = spendingsList.filter((s) => s.type === 'once');
@@ -158,7 +175,7 @@ export default function FinancePage() {
             <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Register Earning</DialogTitle>
-                <DialogDescription>Add your monthly earning</DialogDescription>
+                <DialogDescription>Add your earning</DialogDescription>
               </DialogHeader>
               <EarningForm />
             </DialogContent>
@@ -183,52 +200,131 @@ export default function FinancePage() {
       <FinanceChart data={chartData} />
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Earnings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {earningsList.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">
-                No earnings registered yet
-              </p>
-            ) : (
-              earningsList.map((earning) => {
-                const monthName = new Date(
-                  earning.year,
-                  earning.month - 1,
-                ).toLocaleString('default', { month: 'long', year: 'numeric' });
-                return (
-                  <div
-                    key={earning.id}
-                    className="flex justify-between items-center p-3 border rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium">{monthName}</p>
-                      {earning.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {earning.description}
-                        </p>
-                      )}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-bold flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                  Monthly Earnings
+                </div>
+                {earningsByType.monthly.length > 0 && (
+                  <span className="text-lg font-semibold text-green-600 dark:text-green-400">
+                    Total: ${earningsByType.monthlyTotal.toFixed(2)}
+                  </span>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {earningsByType.monthly.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">
+                  No monthly earnings registered yet
+                </p>
+              ) : (
+                earningsByType.monthly.map((earning) => {
+                  const monthName = new Date(
+                    earning.year,
+                    earning.month - 1,
+                  ).toLocaleString('default', {
+                    month: 'long',
+                    year: 'numeric',
+                  });
+                  return (
+                    <div
+                      key={earning.id}
+                      className="flex justify-between items-center p-3 border-l-4 border-l-green-500 rounded-lg bg-green-50/50 dark:bg-green-950/20"
+                    >
+                      <div>
+                        <p className="font-medium">{monthName}</p>
+                        {earning.description && (
+                          <p className="text-sm text-muted-foreground">
+                            {earning.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-green-600 dark:text-green-400">
+                          ${Number.parseFloat(earning.amount).toFixed(2)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            executeDeleteEarning({ id: earning.id })
+                          }
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-green-600">
-                        ${Number.parseFloat(earning.amount).toFixed(2)}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => executeDeleteEarning({ id: earning.id })}
-                      >
-                        Delete
-                      </Button>
+                  );
+                })
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-bold flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                  One-time Earnings
+                </div>
+                {earningsByType.once.length > 0 && (
+                  <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+                    Total: ${earningsByType.onceTotal.toFixed(2)}
+                  </span>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {earningsByType.once.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">
+                  No one-time earnings registered yet
+                </p>
+              ) : (
+                earningsByType.once.map((earning) => {
+                  const monthName = new Date(
+                    earning.year,
+                    earning.month - 1,
+                  ).toLocaleString('default', {
+                    month: 'long',
+                    year: 'numeric',
+                  });
+                  return (
+                    <div
+                      key={earning.id}
+                      className="flex justify-between items-center p-3 border-l-4 border-l-emerald-500 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20"
+                    >
+                      <div>
+                        <p className="font-medium">{monthName}</p>
+                        {earning.description && (
+                          <p className="text-sm text-muted-foreground">
+                            {earning.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                          ${Number.parseFloat(earning.amount).toFixed(2)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            executeDeleteEarning({ id: earning.id })
+                          }
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            )}
-          </CardContent>
-        </Card>
+                  );
+                })
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="space-y-6">
           <Card>

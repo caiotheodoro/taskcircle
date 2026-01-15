@@ -39,6 +39,7 @@ export const earningSchema = z.object({
       message: 'Amount must be a valid number with up to 2 decimal places',
     }),
   description: z.string().optional(),
+  type: z.enum(['monthly', 'once']),
   month: z.number().min(1).max(12),
   year: z.number().min(2000).max(2100),
 });

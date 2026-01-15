@@ -262,6 +262,11 @@ export enum SpendingType {
   INSTALLMENT = 'installment',
 }
 
+export enum EarningType {
+  MONTHLY = 'monthly',
+  ONCE = 'once',
+}
+
 export const earnings = pgTable('earnings', {
   id: text('id')
     .primaryKey()
@@ -274,6 +279,7 @@ export const earnings = pgTable('earnings', {
     }),
   amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
   description: text('description'),
+  type: text('type').$type<EarningType>().notNull(),
   month: integer('month').notNull(),
   year: integer('year').notNull(),
   created_at: timestamp('created_at').defaultNow(),
