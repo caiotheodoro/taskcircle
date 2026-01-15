@@ -29,7 +29,7 @@ export default function Footer() {
           <FaLinkedin className="w-5 h-5" />
         </Link>
         <Link
-          href="https://caiotheodoro.dev"
+          href="https://caio.theodoro.dev"
           className="text-xs hover:underline underline-offset-4"
           prefetch={false}
           target="_blank"
