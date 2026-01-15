@@ -3,4 +3,4 @@
 
 chmod ug+x .husky/*
 chmod 755 ./.husky/hooks/check_branch_naming.sh && bash ./.husky/hooks/check_branch_naming.sh
-yarn lint-staged
+pnpm lint-staged

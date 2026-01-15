@@ -26,8 +26,34 @@ export const requestMembershipSchema = z.object({
 });
 
 export const newOrgSchema = z.object({
-  // pattern="[a-zA-Z0-9-]{1,40}"
   name: z.string().regex(/^[a-zA-Z0-9-]{1,40}$/, {
     message: 'Name must contain only letters, numbers, and dashes.',
   }),
+});
+
+export const earningSchema = z.object({
+  amount: z
+    .string()
+    .min(1, { message: 'Amount is required' })
+    .regex(/^\d+(\.\d{1,2})?$/, {
+      message: 'Amount must be a valid number with up to 2 decimal places',
+    }),
+  description: z.string().optional(),
+  month: z.number().min(1).max(12),
+  year: z.number().min(2000).max(2100),
+});
+
+export const spendingSchema = z.object({
+  amount: z
+    .string()
+    .min(1, { message: 'Amount is required' })
+    .regex(/^\d+(\.\d{1,2})?$/, {
+      message: 'Amount must be a valid number with up to 2 decimal places',
+    }),
+  description: z.string().optional(),
+  type: z.enum(['monthly', 'once', 'installment']),
+  month: z.number().min(1).max(12),
+  year: z.number().min(2000).max(2100),
+  installment_current: z.number().optional(),
+  installment_total: z.number().optional(),
 });

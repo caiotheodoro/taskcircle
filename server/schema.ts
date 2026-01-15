@@ -1,7 +1,14 @@
 import type { AdapterAccount } from '@auth/core/adapters';
 import { createId, init } from '@paralleldrive/cuid2';
 import { relations } from 'drizzle-orm';
-import { boolean, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  decimal,
+  integer,
+  pgTable,
+  text,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { primaryKey, timestamp } from 'drizzle-orm/pg-core';
 
 const cre = init({ length: 5 });
@@ -120,6 +127,8 @@ export const userOrganizations = pgTable(
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   organizations: many(userOrganizations),
+  earnings: many(earnings),
+  spendings: many(spendings),
 }));
 
 export const userOrganizationsRelations = relations(
@@ -243,6 +252,63 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   }),
   author: one(users, {
     fields: [comments.user_id],
+    references: [users.id],
+  }),
+}));
+
+export enum SpendingType {
+  MONTHLY = 'monthly',
+  ONCE = 'once',
+  INSTALLMENT = 'installment',
+}
+
+export const earnings = pgTable('earnings', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => createId()),
+  user_id: text('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+  description: text('description'),
+  month: integer('month').notNull(),
+  year: integer('year').notNull(),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
+export const spendings = pgTable('spendings', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => createId()),
+  user_id: text('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
+  description: text('description'),
+  type: text('type').$type<SpendingType>().notNull(),
+  month: integer('month').notNull(),
+  year: integer('year').notNull(),
+  installment_current: integer('installment_current'),
+  installment_total: integer('installment_total'),
+  created_at: timestamp('created_at').defaultNow(),
+});
+
+export const earningsRelations = relations(earnings, ({ one }) => ({
+  user: one(users, {
+    fields: [earnings.user_id],
+    references: [users.id],
+  }),
+}));
+
+export const spendingsRelations = relations(spendings, ({ one }) => ({
+  user: one(users, {
+    fields: [spendings.user_id],
     references: [users.id],
   }),
 }));
