@@ -21,6 +21,7 @@ import {
 } from '@/server/schema';
 import { redis } from '@/server/upstash';
 
+import { fetchOrganizationByName } from './organization';
 import { checkAdminStatus, fetchOrganizationById } from './shared';
 
 const rateLimit = new Ratelimit({
@@ -104,19 +105,33 @@ export const listUsersAndPendingInvites = action(
 );
 
 export const changePendingInvite = action(
-  z.object({
-    org_id: z.string(),
-    user_id: z.string(),
-    status: z.enum([
-      OrganizationInviteStatus.ACCEPTED,
-      OrganizationInviteStatus.REJECTED,
-      OrganizationInviteStatus.PENDING,
-    ]),
-  }),
-  async ({ org_id, user_id, status }) => {
+  z
+    .object({
+      org_name: z.string().optional(),
+      org_id: z.string().optional(),
+      user_id: z.string(),
+      status: z.enum([
+        OrganizationInviteStatus.ACCEPTED,
+        OrganizationInviteStatus.REJECTED,
+        OrganizationInviteStatus.PENDING,
+      ]),
+    })
+    .refine((data) => data.org_id || data.org_name, {
+      message: 'Either org_id or org_name is required',
+      path: ['org_id'],
+    }),
+  async ({ org_name, org_id, user_id, status }) => {
     try {
       const session = await auth();
-      const org = await fetchOrganizationById(org_id);
+
+      let org;
+      if (org_id) {
+        org = await fetchOrganizationById(org_id);
+      } else if (org_name) {
+        org = await fetchOrganizationByName(org_name);
+      } else {
+        return { error: OrganizationService.NOT_FOUND };
+      }
 
       if (!org) return { error: OrganizationService.NOT_FOUND };
 

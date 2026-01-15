@@ -63,6 +63,7 @@ export function Members() {
     status: OrganizationInviteStatus,
   ) => {
     executeChangePendingInvite({
+      org_name: organization.name,
       org_id: organization.id,
       user_id,
       status,

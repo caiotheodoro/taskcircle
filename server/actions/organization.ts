@@ -210,7 +210,7 @@ const fetchOrganizationById = async (orgId) => {
   });
 };
 
-const fetchOrganizationByName = async (orgName) => {
+export const fetchOrganizationByName = async (orgName: string) => {
   return await db.query.organization.findFirst({
     where: eq(organization.name, orgName),
   });
