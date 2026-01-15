@@ -55,6 +55,9 @@ export default function FinancePage() {
     },
   });
 
+  const earningsList = finances?.success?.earnings || [];
+  const spendingsList = finances?.success?.spendings || [];
+
   const chartData = useMemo(() => {
     if (!finances?.success) return [];
 
@@ -99,20 +102,6 @@ export default function FinancePage() {
         return a.monthNum - b.monthNum;
       });
   }, [finances]);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-[400px] w-full rounded-xl" />
-        <Skeleton className="h-[400px] w-full rounded-xl" />
-      </div>
-    );
-  }
-
-  if (error) return <p className="text-destructive">{error.message}</p>;
-
-  const earningsList = finances?.success?.earnings || [];
-  const spendingsList = finances?.success?.spendings || [];
 
   const earningsByType = useMemo(() => {
     const monthly = earningsList.filter((e) => e.type === 'monthly');
@@ -160,6 +149,17 @@ export default function FinancePage() {
 
     return { monthly, once, installment, monthlyTotal, installmentTotal };
   }, [spendingsList]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-[400px] w-full rounded-xl" />
+        <Skeleton className="h-[400px] w-full rounded-xl" />
+      </div>
+    );
+  }
+
+  if (error) return <p className="text-destructive">{error.message}</p>;
 
   return (
     <div className="space-y-6">
