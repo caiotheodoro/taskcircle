@@ -63,7 +63,7 @@ export default function FramerCheckbox({
   const [isChecked, setIsChecked] = useState(checked);
 
   useEffect(() => {
-      setIsChecked(checked);
+    setIsChecked(checked);
   }, [checked]);
 
   return (
