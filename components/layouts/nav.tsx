@@ -20,6 +20,9 @@ export default async function Nav() {
             </Button>
           ) : (
             <div className="flex items-center gap-4">
+              <Button asChild variant="outline">
+                <Link href="/financial">Financial</Link>
+              </Button>
               <OrgPanel />
               <UserButton expires={user.expires} user={user.user} />
             </div>

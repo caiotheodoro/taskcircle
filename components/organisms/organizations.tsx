@@ -2,13 +2,10 @@
 
 import { useEffect, useMemo } from 'react';
 
-import Link from 'next/link';
-
 import useOrganizationStore from '@/app/hooks/stores/organization';
 import { OrganizationResponse } from '@/app/types/organization';
 import { ORGANIZATION_STATUS } from '@/app/utils/get-org-status';
 import { OtpCard } from '@/components/molecules/otp-card';
-import { Button } from '@/components/ui/button';
 import { CardMotion } from '@/components/ui/card';
 
 import { OrganizationForm } from './organization-form';
@@ -60,11 +57,6 @@ export default function Organizations({
           layout
           className="flex flex-col mt-6 font-medium border-none shadow-none"
         >
-          <div className="flex justify-end mb-4">
-            <Button asChild variant="outline">
-              <Link href="/financial">Financial</Link>
-            </Button>
-          </div>
           <PostForm />
           <Posts />
         </CardMotion>
