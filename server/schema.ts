@@ -257,13 +257,13 @@ export const commentsRelations = relations(comments, ({ one }) => ({
 }));
 
 export enum SpendingType {
-  MONTHLY = 'monthly',
+  RECURRENT = 'recurrent',
   ONCE = 'once',
   INSTALLMENT = 'installment',
 }
 
 export enum EarningType {
-  MONTHLY = 'monthly',
+  RECURRENT = 'recurrent',
   ONCE = 'once',
 }
 

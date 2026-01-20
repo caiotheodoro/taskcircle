@@ -36,7 +36,7 @@ async function applyMigration() {
     }
 
     await sql.unsafe(
-      `UPDATE earnings SET type = 'monthly' WHERE type IS NULL OR type = '';`,
+      `UPDATE earnings SET type = 'recurrent' WHERE type IS NULL OR type = '' OR type = 'monthly';`,
     );
     console.log('✓ Set default type for existing earnings');
 

@@ -49,7 +49,7 @@ export default function EarningForm() {
     defaultValues: {
       amount: '',
       description: '',
-      type: 'monthly',
+      type: 'recurrent',
       month: currentMonth,
       year: currentYear,
     },
@@ -70,7 +70,7 @@ export default function EarningForm() {
       form.reset({
         amount: '',
         description: '',
-        type: 'monthly',
+        type: 'recurrent',
         month: currentMonth,
         year: currentYear,
       });
@@ -155,7 +155,7 @@ export default function EarningForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="recurrent">Recurrent</SelectItem>
                       <SelectItem value="once">Once</SelectItem>
                     </SelectContent>
                   </Select>
@@ -167,9 +167,13 @@ export default function EarningForm() {
               <FormField
                 control={form.control}
                 name="month"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Month</FormLabel>
+                render={({ field }) => {
+                  const earningType = form.watch('type');
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {earningType === 'recurrent' ? 'Starts in: Month' : 'Month'}
+                      </FormLabel>
                     <Select
                       onValueChange={(value) =>
                         field.onChange(Number.parseInt(value))
@@ -196,32 +200,38 @@ export default function EarningForm() {
                     </Select>
                     <FormMessage />
                   </FormItem>
-                )}
+                  );
+                }}
               />
               <FormField
                 control={form.control}
                 name="year"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Year</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={2000}
-                        max={2100}
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(
-                            Number.parseInt(e.target.value) || currentYear,
-                          )
-                        }
-                        value={field.value}
-                        className="text-base"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const earningType = form.watch('type');
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {earningType === 'recurrent' ? 'Starts in: Year' : 'Year'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={2000}
+                          max={2100}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              Number.parseInt(e.target.value) || currentYear,
+                            )
+                          }
+                          value={field.value}
+                          className="text-base"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
           </CardContent>

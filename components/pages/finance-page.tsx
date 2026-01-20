@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useAction } from 'next-safe-action/hooks';
@@ -16,6 +16,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useGetFinances } from '@/hooks/finance';
@@ -24,10 +31,16 @@ import { deleteEarning, deleteSpending } from '@/server/actions/finance';
 import EarningForm from '../organisms/earning-form';
 import SpendingForm from '../organisms/spending-form';
 
+const currentDate = new Date();
+const currentMonth = currentDate.getMonth() + 1;
+const currentYear = currentDate.getFullYear();
+
 export default function FinancePage() {
   const { data: finances, error, isLoading } = useGetFinances();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
 
   const { execute: executeDeleteEarning } = useAction(deleteEarning, {
     onSuccess() {
@@ -72,6 +85,45 @@ export default function FinancePage() {
   const earningsList = finances?.success?.earnings || [];
   const spendingsList = finances?.success?.spendings || [];
 
+  const isRecurrentItemInMonth = (
+    itemYear: number,
+    itemMonth: number,
+    type: string,
+    targetYear: number,
+    targetMonth: number,
+  ) => {
+    if (type !== 'recurrent') {
+      return itemYear === targetYear && itemMonth === targetMonth;
+    }
+    const itemDate = new Date(itemYear, itemMonth - 1);
+    const targetDate = new Date(targetYear, targetMonth - 1);
+    return itemDate <= targetDate;
+  };
+
+  const filteredEarningsList = useMemo(() => {
+    return earningsList.filter((earning) =>
+      isRecurrentItemInMonth(
+        earning.year,
+        earning.month,
+        earning.type,
+        selectedYear,
+        selectedMonth,
+      ),
+    );
+  }, [earningsList, selectedYear, selectedMonth]);
+
+  const filteredSpendingsList = useMemo(() => {
+    return spendingsList.filter((spending) =>
+      isRecurrentItemInMonth(
+        spending.year,
+        spending.month,
+        spending.type,
+        selectedYear,
+        selectedMonth,
+      ),
+    );
+  }, [spendingsList, selectedYear, selectedMonth]);
+
   const chartData = useMemo(() => {
     if (!finances?.success) return [];
 
@@ -80,19 +132,57 @@ export default function FinancePage() {
     const grouped: Record<string, { earnings: number; spendings: number }> = {};
 
     earnings.forEach((earning) => {
-      const key = `${earning.year}-${earning.month}`;
-      if (!grouped[key]) {
-        grouped[key] = { earnings: 0, spendings: 0 };
+      if (earning.type === 'recurrent') {
+        const startDate = new Date(earning.year, earning.month - 1);
+        const endDate = new Date();
+        const currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth() + 1;
+          const key = `${year}-${month}`;
+
+          if (!grouped[key]) {
+            grouped[key] = { earnings: 0, spendings: 0 };
+          }
+          grouped[key].earnings += Number.parseFloat(earning.amount);
+
+          currentDate.setMonth(currentDate.getMonth() + 1);
+        }
+      } else {
+        const key = `${earning.year}-${earning.month}`;
+        if (!grouped[key]) {
+          grouped[key] = { earnings: 0, spendings: 0 };
+        }
+        grouped[key].earnings += Number.parseFloat(earning.amount);
       }
-      grouped[key].earnings += Number.parseFloat(earning.amount);
     });
 
     spendings.forEach((spending) => {
-      const key = `${spending.year}-${spending.month}`;
-      if (!grouped[key]) {
-        grouped[key] = { earnings: 0, spendings: 0 };
+      if (spending.type === 'recurrent') {
+        const startDate = new Date(spending.year, spending.month - 1);
+        const endDate = new Date();
+        const currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth() + 1;
+          const key = `${year}-${month}`;
+
+          if (!grouped[key]) {
+            grouped[key] = { earnings: 0, spendings: 0 };
+          }
+          grouped[key].spendings += Number.parseFloat(spending.amount);
+
+          currentDate.setMonth(currentDate.getMonth() + 1);
+        }
+      } else {
+        const key = `${spending.year}-${spending.month}`;
+        if (!grouped[key]) {
+          grouped[key] = { earnings: 0, spendings: 0 };
+        }
+        grouped[key].spendings += Number.parseFloat(spending.amount);
       }
-      grouped[key].spendings += Number.parseFloat(spending.amount);
     });
 
     return Object.entries(grouped)
@@ -118,10 +208,10 @@ export default function FinancePage() {
   }, [finances]);
 
   const earningsByType = useMemo(() => {
-    const monthly = earningsList.filter((e) => e.type === 'monthly');
-    const once = earningsList.filter((e) => e.type === 'once');
+    const recurrent = filteredEarningsList.filter((e) => e.type === 'recurrent');
+    const once = filteredEarningsList.filter((e) => e.type === 'once');
 
-    const monthlyTotal = monthly.reduce(
+    const recurrentTotal = recurrent.reduce(
       (sum, e) => sum + Number.parseFloat(e.amount),
       0,
     );
@@ -131,13 +221,13 @@ export default function FinancePage() {
       0,
     );
 
-    return { monthly, once, monthlyTotal, onceTotal };
-  }, [earningsList]);
+    return { recurrent, once, recurrentTotal, onceTotal };
+  }, [filteredEarningsList]);
 
   const spendingsByType = useMemo(() => {
-    const monthly = spendingsList.filter((s) => s.type === 'monthly');
-    const once = spendingsList.filter((s) => s.type === 'once');
-    const installment = spendingsList
+    const recurrent = filteredSpendingsList.filter((s) => s.type === 'recurrent');
+    const once = filteredSpendingsList.filter((s) => s.type === 'once');
+    const installment = filteredSpendingsList
       .filter((s) => s.type === 'installment')
       .sort((a, b) => {
         const aRemaining =
@@ -151,7 +241,7 @@ export default function FinancePage() {
         return aRemaining - bRemaining;
       });
 
-    const monthlyTotal = monthly.reduce(
+    const recurrentTotal = recurrent.reduce(
       (sum, s) => sum + Number.parseFloat(s.amount),
       0,
     );
@@ -161,8 +251,8 @@ export default function FinancePage() {
       0,
     );
 
-    return { monthly, once, installment, monthlyTotal, installmentTotal };
-  }, [spendingsList]);
+    return { recurrent, once, installment, recurrentTotal, installmentTotal };
+  }, [filteredSpendingsList]);
 
   if (isLoading) {
     return (
@@ -180,6 +270,42 @@ export default function FinancePage() {
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <h1 className="text-3xl font-bold">Financial Management</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex gap-2">
+            <Select
+              value={selectedMonth.toString()}
+              onValueChange={(value) => setSelectedMonth(Number.parseInt(value))}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                  <SelectItem key={month} value={month.toString()}>
+                    {new Date(2000, month - 1).toLocaleString('default', {
+                      month: 'long',
+                    })}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={selectedYear.toString()}
+              onValueChange={(value) => setSelectedYear(Number.parseInt(value))}
+            >
+              <SelectTrigger className="w-[100px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 20 }, (_, i) => currentYear - 5 + i).map(
+                  (year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+          </div>
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="default" className="w-full sm:w-auto">
@@ -220,23 +346,23 @@ export default function FinancePage() {
               <CardTitle className="text-xl font-bold flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                  Monthly Earnings
+                  Recurrent Earnings
                 </div>
-                {earningsByType.monthly.length > 0 && (
+                {earningsByType.recurrent.length > 0 && (
                   <span className="text-lg font-semibold text-green-600 dark:text-green-400">
-                    Total: ${earningsByType.monthlyTotal.toFixed(2)}
+                    Total: ${earningsByType.recurrentTotal.toFixed(2)}
                   </span>
                 )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {earningsByType.monthly.length === 0 ? (
+              {earningsByType.recurrent.length === 0 ? (
                 <p className="text-muted-foreground text-center py-4">
-                  No monthly earnings registered yet
+                  No recurrent earnings registered yet
                 </p>
               ) : (
-                earningsByType.monthly.map((earning) => {
-                  const monthName = new Date(
+                earningsByType.recurrent.map((earning) => {
+                  const startMonthName = new Date(
                     earning.year,
                     earning.month - 1,
                   ).toLocaleString('default', {
@@ -249,7 +375,7 @@ export default function FinancePage() {
                       className="flex justify-between items-center p-3 border-l-4 border-l-green-500 rounded-lg bg-green-50/50 dark:bg-green-950/20"
                     >
                       <div>
-                        <p className="font-medium">{monthName}</p>
+                        <p className="font-medium">Starts in: {startMonthName}</p>
                         {earning.description && (
                           <p className="text-sm text-muted-foreground">
                             {earning.description}
@@ -350,23 +476,23 @@ export default function FinancePage() {
               <CardTitle className="text-xl font-bold flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                  Monthly Spendings
+                  Recurrent Spendings
                 </div>
-                {spendingsByType.monthly.length > 0 && (
+                {spendingsByType.recurrent.length > 0 && (
                   <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-                    Total: ${spendingsByType.monthlyTotal.toFixed(2)}
+                    Total: ${spendingsByType.recurrentTotal.toFixed(2)}
                   </span>
                 )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {spendingsByType.monthly.length === 0 ? (
+              {spendingsByType.recurrent.length === 0 ? (
                 <p className="text-muted-foreground text-center py-4">
-                  No monthly spendings registered yet
+                  No recurrent spendings registered yet
                 </p>
               ) : (
-                spendingsByType.monthly.map((spending) => {
-                  const monthName = new Date(
+                spendingsByType.recurrent.map((spending) => {
+                  const startMonthName = new Date(
                     spending.year,
                     spending.month - 1,
                   ).toLocaleString('default', {
@@ -379,7 +505,7 @@ export default function FinancePage() {
                       className="flex justify-between items-center p-3 border-l-4 border-l-blue-500 rounded-lg bg-blue-50/50 dark:bg-blue-950/20"
                     >
                       <div>
-                        <p className="font-medium">{monthName}</p>
+                        <p className="font-medium">Starts in: {startMonthName}</p>
                         {spending.description && (
                           <p className="text-sm text-muted-foreground">
                             {spending.description}

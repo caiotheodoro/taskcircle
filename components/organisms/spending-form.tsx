@@ -49,7 +49,7 @@ export default function SpendingForm() {
     defaultValues: {
       amount: '',
       description: '',
-      type: 'monthly',
+      type: 'recurrent',
       month: currentMonth,
       year: currentYear,
       installment_current: undefined,
@@ -74,7 +74,7 @@ export default function SpendingForm() {
       form.reset({
         amount: '',
         description: '',
-        type: 'monthly',
+        type: 'recurrent',
         month: currentMonth,
         year: currentYear,
         installment_current: undefined,
@@ -161,7 +161,7 @@ export default function SpendingForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="recurrent">Recurrent</SelectItem>
                       <SelectItem value="once">Once</SelectItem>
                       <SelectItem value="installment">Installment</SelectItem>
                     </SelectContent>
@@ -228,9 +228,13 @@ export default function SpendingForm() {
               <FormField
                 control={form.control}
                 name="month"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Month</FormLabel>
+                render={({ field }) => {
+                  const spendingType = form.watch('type');
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {spendingType === 'recurrent' ? 'Starts in: Month' : 'Month'}
+                      </FormLabel>
                     <Select
                       onValueChange={(value) =>
                         field.onChange(Number.parseInt(value))
@@ -262,27 +266,32 @@ export default function SpendingForm() {
               <FormField
                 control={form.control}
                 name="year"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Year</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={2000}
-                        max={2100}
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(
-                            Number.parseInt(e.target.value) || currentYear,
-                          )
-                        }
-                        value={field.value}
-                        className="text-base"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const spendingType = form.watch('type');
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        {spendingType === 'recurrent' ? 'Starts in: Year' : 'Year'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={2000}
+                          max={2100}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              Number.parseInt(e.target.value) || currentYear,
+                            )
+                          }
+                          value={field.value}
+                          className="text-base"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
           </CardContent>
