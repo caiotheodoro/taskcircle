@@ -261,7 +261,8 @@ export default function SpendingForm() {
                     </Select>
                     <FormMessage />
                   </FormItem>
-                )}
+                  );
+                }}
               />
               <FormField
                 control={form.control}
