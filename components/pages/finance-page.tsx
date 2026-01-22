@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -41,6 +42,7 @@ export default function FinancePage() {
   const { toast } = useToast();
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { execute: executeDeleteEarning } = useAction(deleteEarning, {
     onSuccess() {
@@ -254,6 +256,100 @@ export default function FinancePage() {
     return { recurrent, once, installment, recurrentTotal, installmentTotal };
   }, [filteredSpendingsList]);
 
+  const searchKeywords = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return searchQuery
+      .split(',')
+      .map((keyword) => keyword.trim().toLowerCase())
+      .filter((keyword) => keyword.length > 0);
+  }, [searchQuery]);
+
+  const matchesSearch = (description: string | null | undefined) => {
+    if (searchKeywords.length === 0) return true;
+    if (!description) return false;
+    const descLower = description.toLowerCase();
+    return searchKeywords.some((keyword) => descLower.includes(keyword));
+  };
+
+  const searchResults = useMemo(() => {
+    if (searchKeywords.length === 0) return null;
+
+    const filteredEarnings = earningsList.filter((earning) =>
+      matchesSearch(earning.description),
+    );
+    const filteredSpendings = spendingsList.filter((spending) =>
+      matchesSearch(spending.description),
+    );
+
+    const earningsByType = {
+      recurrent: filteredEarnings.filter((e) => e.type === 'recurrent'),
+      once: filteredEarnings.filter((e) => e.type === 'once'),
+    };
+
+    const spendingsByType = {
+      recurrent: filteredSpendings.filter((s) => s.type === 'recurrent'),
+      once: filteredSpendings.filter((s) => s.type === 'once'),
+      installment: filteredSpendings.filter((s) => s.type === 'installment'),
+    };
+
+    const totals = {
+      earnings: {
+        recurrent: earningsByType.recurrent.reduce(
+          (sum, e) => sum + Number.parseFloat(e.amount),
+          0,
+        ),
+        once: earningsByType.once.reduce(
+          (sum, e) => sum + Number.parseFloat(e.amount),
+          0,
+        ),
+        total:
+          earningsByType.recurrent.reduce(
+            (sum, e) => sum + Number.parseFloat(e.amount),
+            0,
+          ) +
+          earningsByType.once.reduce(
+            (sum, e) => sum + Number.parseFloat(e.amount),
+            0,
+          ),
+      },
+      spendings: {
+        recurrent: spendingsByType.recurrent.reduce(
+          (sum, s) => sum + Number.parseFloat(s.amount),
+          0,
+        ),
+        once: spendingsByType.once.reduce(
+          (sum, s) => sum + Number.parseFloat(s.amount),
+          0,
+        ),
+        installment: spendingsByType.installment.reduce((sum, s) => {
+          const amount = Number.parseFloat(s.amount);
+          const totalInstallments = s.installment_total || 1;
+          return sum + amount * totalInstallments;
+        }, 0),
+        total:
+          spendingsByType.recurrent.reduce(
+            (sum, s) => sum + Number.parseFloat(s.amount),
+            0,
+          ) +
+          spendingsByType.once.reduce(
+            (sum, s) => sum + Number.parseFloat(s.amount),
+            0,
+          ) +
+          spendingsByType.installment.reduce((sum, s) => {
+            const amount = Number.parseFloat(s.amount);
+            const totalInstallments = s.installment_total || 1;
+            return sum + amount * totalInstallments;
+          }, 0),
+      },
+    };
+
+    return {
+      earnings: earningsByType,
+      spendings: spendingsByType,
+      totals,
+    };
+  }, [earningsList, spendingsList, searchKeywords]);
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -337,9 +433,118 @@ export default function FinancePage() {
         </div>
       </div>
 
-      <FinanceChart data={chartData} />
+      <div className="w-full">
+        <Input
+          type="text"
+          placeholder="Search by description (e.g., rent, groceries, salary)"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full"
+        />
+        {searchQuery && (
+          <p className="text-sm text-muted-foreground mt-2">
+            Search for: {searchKeywords.join(', ')}
+          </p>
+        )}
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      {searchResults ? (
+        <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Search Results - Earnings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-green-500 rounded-lg bg-green-50/50 dark:bg-green-950/20">
+                    <span className="font-medium">Recurrent Earnings</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      ${searchResults.totals.earnings.recurrent.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-emerald-500 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20">
+                    <span className="font-medium">One-time Earnings</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                      ${searchResults.totals.earnings.once.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-green-600 rounded-lg bg-green-100/50 dark:bg-green-900/20 font-bold">
+                    <span>Total Earnings</span>
+                    <span className="text-green-700 dark:text-green-300">
+                      ${searchResults.totals.earnings.total.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Search Results - Spendings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-blue-500 rounded-lg bg-blue-50/50 dark:bg-blue-950/20">
+                    <span className="font-medium">Recurrent Spendings</span>
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      ${searchResults.totals.spendings.recurrent.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-orange-500 rounded-lg bg-orange-50/50 dark:bg-orange-950/20">
+                    <span className="font-medium">One-time Spendings</span>
+                    <span className="font-semibold text-orange-600 dark:text-orange-400">
+                      ${searchResults.totals.spendings.once.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-purple-500 rounded-lg bg-purple-50/50 dark:bg-purple-950/20">
+                    <span className="font-medium">Installment Spendings (Total)</span>
+                    <span className="font-semibold text-purple-600 dark:text-purple-400">
+                      ${searchResults.totals.spendings.installment.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border-l-4 border-l-red-600 rounded-lg bg-red-100/50 dark:bg-red-900/20 font-bold">
+                    <span>Total Spendings</span>
+                    <span className="text-red-700 dark:text-red-300">
+                      ${searchResults.totals.spendings.total.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-bold">Net Balance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center p-4 border-l-4 border-l-gray-600 rounded-lg bg-gray-100/50 dark:bg-gray-900/20">
+                <span className="text-lg font-bold">Balance</span>
+                <span
+                  className={`text-2xl font-bold ${
+                    searchResults.totals.earnings.total -
+                      searchResults.totals.spendings.total >=
+                    0
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`}
+                >
+                  $
+                  {(
+                    searchResults.totals.earnings.total -
+                    searchResults.totals.spendings.total
+                  ).toFixed(2)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <>
+          <FinanceChart data={chartData} />
+
+          <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -664,6 +869,8 @@ export default function FinancePage() {
           </Card>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
