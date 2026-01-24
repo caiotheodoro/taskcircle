@@ -226,20 +226,65 @@ export default function FinancePage() {
     return { recurrent, once, recurrentTotal, onceTotal };
   }, [filteredEarningsList]);
 
+  const calculateInstallmentProgress = (
+    startYear: number,
+    startMonth: number,
+    initialCurrent: number | null,
+    total: number | null,
+    selectedYear: number,
+    selectedMonth: number,
+  ) => {
+    if (!initialCurrent || !total) return null;
+
+    const startDate = new Date(startYear, startMonth - 1);
+    const selectedDate = new Date(selectedYear, selectedMonth - 1);
+
+    if (selectedDate < startDate) return null;
+
+    const monthsDiff =
+      (selectedYear - startYear) * 12 + (selectedMonth - startMonth);
+    const currentInstallment = initialCurrent + monthsDiff;
+
+    if (currentInstallment > total) return null;
+
+    return { current: currentInstallment, total };
+  };
+
   const spendingsByType = useMemo(() => {
     const recurrent = filteredSpendingsList.filter((s) => s.type === 'recurrent');
     const once = filteredSpendingsList.filter((s) => s.type === 'once');
     const installment = filteredSpendingsList
-      .filter((s) => s.type === 'installment')
+      .filter((s) => {
+        if (s.type !== 'installment') return false;
+        const progress = calculateInstallmentProgress(
+          s.year,
+          s.month,
+          s.installment_current,
+          s.installment_total,
+          selectedYear,
+          selectedMonth,
+        );
+        return progress !== null;
+      })
       .sort((a, b) => {
-        const aRemaining =
-          a.installment_total && a.installment_current
-            ? a.installment_total - a.installment_current
-            : Infinity;
-        const bRemaining =
-          b.installment_total && b.installment_current
-            ? b.installment_total - b.installment_current
-            : Infinity;
+        const aProgress = calculateInstallmentProgress(
+          a.year,
+          a.month,
+          a.installment_current,
+          a.installment_total,
+          selectedYear,
+          selectedMonth,
+        );
+        const bProgress = calculateInstallmentProgress(
+          b.year,
+          b.month,
+          b.installment_current,
+          b.installment_total,
+          selectedYear,
+          selectedMonth,
+        );
+        const aRemaining = aProgress ? aProgress.total - aProgress.current : Infinity;
+        const bRemaining = bProgress ? bProgress.total - bProgress.current : Infinity;
         return aRemaining - bRemaining;
       });
 
@@ -254,7 +299,7 @@ export default function FinancePage() {
     );
 
     return { recurrent, once, installment, recurrentTotal, installmentTotal };
-  }, [filteredSpendingsList]);
+  }, [filteredSpendingsList, selectedYear, selectedMonth]);
 
   const searchKeywords = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -818,17 +863,24 @@ export default function FinancePage() {
                 </p>
               ) : (
                 spendingsByType.installment.map((spending) => {
-                  const monthName = new Date(
+                  const startMonthName = new Date(
                     spending.year,
                     spending.month - 1,
                   ).toLocaleString('default', {
                     month: 'long',
                     year: 'numeric',
                   });
-                  const installmentText =
-                    spending.installment_current && spending.installment_total
-                      ? ` (${spending.installment_current}/${spending.installment_total})`
-                      : '';
+                  const progress = calculateInstallmentProgress(
+                    spending.year,
+                    spending.month,
+                    spending.installment_current,
+                    spending.installment_total,
+                    selectedYear,
+                    selectedMonth,
+                  );
+                  const installmentText = progress
+                    ? ` (${progress.current}/${progress.total})`
+                    : '';
                   return (
                     <div
                       key={spending.id}
@@ -836,7 +888,7 @@ export default function FinancePage() {
                     >
                       <div>
                         <p className="font-medium">
-                          {monthName}
+                          Starts in: {startMonthName}
                           {installmentText}
                         </p>
                         {spending.description && (
